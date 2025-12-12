@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, MapPin, Star, Filter, ChevronDown, ExternalLink, Phone, Instagram, Clock, CheckCircle, Wheat } from 'lucide-react';
 import { BreadSource, SearchFilters } from './types';
 import { MOCK_BREAD_SOURCES, TYPE_LABELS, TYPE_COLORS } from './constants';
