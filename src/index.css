@@ -2,6 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Leaflet map fixes */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Custom marker styling */
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
+.user-location-marker {
+  background: transparent;
+  border: none;
+}
+
+.numbered-marker,
+.custom-numbered-marker,
+.user-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Pulse animation for user location */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2), 0 0 12px rgba(59, 130, 246, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* Fix popup styling with Tailwind */
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0.75rem;
+}
+
+.leaflet-popup-tip {
+  background: white;
 }

@@ -1,6 +1,7 @@
-import { BreadSource } from './types';
+import { Bakery } from './types';
 
-export const MOCK_BREAD_SOURCES: BreadSource[] = [
+// Fallback mock data when Supabase is not configured
+export const MOCK_BAKERIES: Bakery[] = [
   {
     id: '1',
     name: 'Tartine Bakery',
@@ -17,6 +18,9 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     website: 'https://tartinebakery.com',
     instagram: '@tartinebakery',
     hours: 'Mon-Sun 7:30am-7pm',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
+    latitude: 37.7617,
+    longitude: -122.4241,
     verified: true,
     featured: true
   },
@@ -34,6 +38,9 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     zip: '94111',
     website: 'https://cuesa.org/markets/ferry-plaza-farmers-market',
     hours: 'Sat 8am-2pm, Tue & Thu 10am-2pm',
+    image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800',
+    latitude: 37.7955,
+    longitude: -122.3937,
     verified: true,
     featured: true
   },
@@ -51,6 +58,9 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     zip: '94110',
     instagram: '@sarahs_sourdough',
     hours: 'Order by Wed, pickup Sat',
+    image: 'https://images.unsplash.com/photo-1585478259715-876acc5be8eb?w=800',
+    latitude: 37.7599,
+    longitude: -122.4148,
     verified: true,
     featured: false
   },
@@ -70,6 +80,9 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     website: 'https://joseybakerbread.com',
     instagram: '@joseybakerbread',
     hours: 'Wed-Sun 8am-3pm',
+    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=800',
+    latitude: 37.7697,
+    longitude: -122.4469,
     verified: true,
     featured: false
   },
@@ -88,6 +101,9 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     website: 'https://breadsrsly.com',
     instagram: '@breadsrsly',
     hours: 'Thu-Sun 9am-2pm',
+    image: 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=800',
+    latitude: 37.7749,
+    longitude: -122.4378,
     verified: true,
     featured: false
   },
@@ -105,10 +121,153 @@ export const MOCK_BREAD_SOURCES: BreadSource[] = [
     zip: '94114',
     instagram: '@marcus_bakes',
     hours: 'Pre-order only, Sat pickup',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
+    latitude: 37.7502,
+    longitude: -122.4337,
     verified: false,
     featured: false
+  },
+  // New York
+  {
+    id: '7',
+    name: 'Sullivan Street Bakery',
+    type: 'bakery',
+    description: 'Renowned NYC bakery famous for their no-knead bread and Italian-style loaves.',
+    specialties: ['Ciabatta', 'Stirato', 'Focaccia', 'Pizza Bianca'],
+    rating: 4.7,
+    reviewCount: 1893,
+    address: '236 9th Ave',
+    city: 'New York',
+    state: 'NY',
+    zip: '10001',
+    phone: '(212) 929-5900',
+    website: 'https://sullivanstreetbakery.com',
+    instagram: '@sullivanstreetbakery',
+    hours: 'Mon-Sat 7am-7pm, Sun 7am-6pm',
+    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800',
+    latitude: 40.7465,
+    longitude: -74.0014,
+    verified: true,
+    featured: true
+  },
+  {
+    id: '8',
+    name: 'Bien Cuit',
+    type: 'bakery',
+    description: 'Brooklyn bakery known for dark, crusty bread and laminated pastries.',
+    specialties: ['Miche', 'Croissants', 'Pain de Mie', 'Rye'],
+    rating: 4.8,
+    reviewCount: 1245,
+    address: '120 Smith St',
+    city: 'Brooklyn',
+    state: 'NY',
+    zip: '11201',
+    phone: '(718) 852-0200',
+    website: 'https://biencuit.com',
+    instagram: '@biencuit',
+    hours: 'Tue-Sun 8am-5pm',
+    image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=800',
+    latitude: 40.6866,
+    longitude: -73.9912,
+    verified: true,
+    featured: false
+  },
+  // Chicago
+  {
+    id: '9',
+    name: 'Publican Quality Bread',
+    type: 'bakery',
+    description: 'Artisan bakery from the Publican restaurant group using local grains.',
+    specialties: ['Sourdough', 'Baguettes', 'Croissants', 'Focaccia'],
+    rating: 4.7,
+    reviewCount: 934,
+    address: '1759 W Hubbard St',
+    city: 'Chicago',
+    state: 'IL',
+    zip: '60622',
+    phone: '(312) 733-9696',
+    website: 'https://publicanqualitybread.com',
+    instagram: '@publicanqualitybread',
+    hours: 'Wed-Sun 8am-4pm',
+    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=800',
+    latitude: 41.8899,
+    longitude: -87.6710,
+    verified: true,
+    featured: true
+  },
+  // Los Angeles
+  {
+    id: '10',
+    name: "Bub and Grandma's",
+    type: 'bakery',
+    description: 'Highland Park bakery known for incredible sourdough and creativity.',
+    specialties: ['Sourdough', 'Focaccia', 'Seasonal Specials', 'Pastries'],
+    rating: 4.9,
+    reviewCount: 1567,
+    address: '5019 York Blvd',
+    city: 'Los Angeles',
+    state: 'CA',
+    zip: '90042',
+    phone: '(323) 302-4820',
+    website: 'https://bubandgrandmas.com',
+    instagram: '@bubandgrandmas',
+    hours: 'Thu-Sun 8am-2pm',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
+    latitude: 34.1172,
+    longitude: -118.2003,
+    verified: true,
+    featured: true
+  },
+  // Seattle
+  {
+    id: '11',
+    name: 'Sea Wolf Bakers',
+    type: 'bakery',
+    description: 'Fremont bakery known for beautiful sourdough and laminated pastries.',
+    specialties: ['Sourdough', 'Croissants', 'Pain au Chocolat', 'Seasonal Loaves'],
+    rating: 4.8,
+    reviewCount: 1234,
+    address: '3621 Stone Way N',
+    city: 'Seattle',
+    state: 'WA',
+    zip: '98103',
+    phone: '(206) 946-1044',
+    website: 'https://seawolfbakers.com',
+    instagram: '@seawolfbakers',
+    hours: 'Wed-Sun 8am-3pm',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
+    latitude: 47.6502,
+    longitude: -122.3427,
+    verified: true,
+    featured: true
+  },
+  // Portland
+  {
+    id: '12',
+    name: "Ken's Artisan Bakery",
+    type: 'bakery',
+    description: 'Portland institution known for perfect baguettes and croissants.',
+    specialties: ['Baguettes', 'Croissants', 'Pain de Campagne', 'Brioche'],
+    rating: 4.8,
+    reviewCount: 1456,
+    address: '338 NW 21st Ave',
+    city: 'Portland',
+    state: 'OR',
+    zip: '97209',
+    phone: '(503) 248-2202',
+    website: 'https://kensartisan.com',
+    instagram: '@kensartisan',
+    hours: 'Mon-Sat 7am-5:30pm, Sun 8am-5pm',
+    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=800',
+    latitude: 45.5264,
+    longitude: -122.6941,
+    verified: true,
+    featured: true
   }
 ];
+
+// Keep for backwards compatibility
+export const MOCK_BREAD_SOURCES = MOCK_BAKERIES;
 
 export const TYPE_LABELS = {
   bakery: 'Bakery',
@@ -117,7 +276,7 @@ export const TYPE_LABELS = {
 };
 
 export const TYPE_COLORS = {
-  bakery: 'bg-amber-100 text-amber-800',
+  bakery: 'bg-yelp-100 text-yelp-600',
   farmers_market: 'bg-green-100 text-green-800',
   home_baker: 'bg-purple-100 text-purple-800'
 };

@@ -1,7 +1,15 @@
-import { useState, useMemo } from 'react';
-import { Search, MapPin, Star, Filter, ChevronDown, ExternalLink, Phone, Instagram, Clock, CheckCircle, Wheat } from 'lucide-react';
-import { BreadSource, SearchFilters } from './types';
-import { MOCK_BREAD_SOURCES, TYPE_LABELS, TYPE_COLORS } from './constants';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { Search, MapPin, Filter, ChevronDown, Wheat, Plus, Loader2, Navigation, ChevronUp, GripHorizontal } from 'lucide-react';
+import type { Bakery, SearchFilters, UserLocation } from './types';
+import { MOCK_BAKERIES } from './constants';
+import { fetchBakeries, isSupabaseConfigured } from './lib/supabase';
+import { geocodeLocation, calculateDistance, getCurrentPosition, reverseGeocode } from './lib/geocoding';
+import BakeryCard from './components/BakeryCard';
+import BakeryModal from './components/BakeryModal';
+import MapView from './components/MapView';
+
+type SheetState = 'collapsed' | 'half' | 'expanded';
 
 function App() {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -12,87 +20,310 @@ function App() {
     sortBy: 'rating'
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<BreadSource | null>(null);
+  const [selectedBakery, setSelectedBakery] = useState<Bakery | null>(null);
+  const [hoveredBakeryId, setHoveredBakeryId] = useState<string | null>(null);
 
-  const filteredSources = useMemo(() => {
-    let results = [...MOCK_BREAD_SOURCES];
+  // Data loading state
+  const [bakeries, setBakeries] = useState<Bakery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Location state
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [searchingLocation, setSearchingLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [gettingLocation, setGettingLocation] = useState(false);
+
+  // Mobile bottom sheet state
+  const [sheetState, setSheetState] = useState<SheetState>('half');
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const dragStartY = useRef<number>(0);
+  const dragStartState = useRef<SheetState>('half');
+
+  // Refs for scrolling to cards
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Load bakeries on mount
+  useEffect(() => {
+    async function loadBakeries() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        if (isSupabaseConfigured()) {
+          const data = await fetchBakeries();
+          if (data.length > 0) {
+            setBakeries(data);
+          } else {
+            setBakeries(MOCK_BAKERIES);
+          }
+        } else {
+          setBakeries(MOCK_BAKERIES);
+        }
+      } catch (err) {
+        console.error('Error loading bakeries:', err);
+        setError('Failed to load bakeries. Using cached data.');
+        setBakeries(MOCK_BAKERIES);
+      }
+
+      setLoading(false);
+    }
+
+    loadBakeries();
+  }, []);
+
+  // Handle location search
+  const handleLocationSearch = useCallback(async () => {
+    if (!filters.location.trim()) {
+      setUserLocation(null);
+      return;
+    }
+
+    setSearchingLocation(true);
+    setLocationError(null);
+
+    const location = await geocodeLocation(filters.location);
+
+    if (location) {
+      setUserLocation(location);
+      setFilters(prev => ({ ...prev, sortBy: 'distance' }));
+    } else {
+      setLocationError('Could not find that location. Try a city name or ZIP code.');
+    }
+
+    setSearchingLocation(false);
+  }, [filters.location]);
+
+  // Debounced location search
+  useEffect(() => {
+    if (!filters.location) {
+      setUserLocation(null);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      handleLocationSearch();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [filters.location, handleLocationSearch]);
+
+  // Get user's current location
+  const handleGetCurrentLocation = async () => {
+    setGettingLocation(true);
+    setLocationError(null);
+
+    try {
+      const position = await getCurrentPosition();
+      const displayName = await reverseGeocode(position.lat, position.lng);
+
+      setUserLocation({
+        lat: position.lat,
+        lng: position.lng,
+        displayName: displayName || undefined
+      });
+
+      if (displayName) {
+        setFilters(prev => ({ ...prev, location: displayName }));
+      }
+
+      setFilters(prev => ({ ...prev, sortBy: 'distance' }));
+    } catch (err) {
+      setLocationError(err instanceof Error ? err.message : 'Could not get your location');
+    }
+
+    setGettingLocation(false);
+  };
+
+  // Handle marker click from map - scroll to card
+  const handleMarkerClick = (bakery: Bakery) => {
+    setHoveredBakeryId(bakery.id);
+    const cardEl = cardRefs.current.get(bakery.id);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    // Expand bottom sheet on mobile when marker is clicked
+    if (window.innerWidth < 1024) {
+      setSheetState('half');
+    }
+  };
+
+  // Filter and sort bakeries
+  const filteredBakeries = useMemo(() => {
+    let results = [...bakeries];
 
     if (filters.query) {
       const query = filters.query.toLowerCase();
-      results = results.filter(source =>
-        source.name.toLowerCase().includes(query) ||
-        source.description.toLowerCase().includes(query) ||
-        source.specialties.some(s => s.toLowerCase().includes(query))
+      results = results.filter(bakery =>
+        bakery.name.toLowerCase().includes(query) ||
+        bakery.description.toLowerCase().includes(query) ||
+        bakery.specialties.some(s => s.toLowerCase().includes(query)) ||
+        bakery.city.toLowerCase().includes(query) ||
+        bakery.state.toLowerCase().includes(query)
       );
     }
 
     if (filters.type !== 'all') {
-      results = results.filter(source => source.type === filters.type);
+      results = results.filter(bakery => bakery.type === filters.type);
+    }
+
+    if (userLocation) {
+      results = results.map(bakery => {
+        if (bakery.latitude && bakery.longitude) {
+          const distance = calculateDistance(
+            userLocation.lat,
+            userLocation.lng,
+            bakery.latitude,
+            bakery.longitude
+          );
+          return { ...bakery, distance };
+        }
+        return { ...bakery, distance: undefined };
+      });
+
+      results = results.filter(bakery =>
+        bakery.distance === undefined || bakery.distance <= filters.radius
+      );
     }
 
     if (filters.sortBy === 'rating') {
       results.sort((a, b) => b.rating - a.rating);
     } else if (filters.sortBy === 'name') {
       results.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (filters.sortBy === 'distance' && userLocation) {
+      results.sort((a, b) => {
+        if (a.distance === undefined && b.distance === undefined) return 0;
+        if (a.distance === undefined) return 1;
+        if (b.distance === undefined) return -1;
+        return a.distance - b.distance;
+      });
     }
 
     return results;
-  }, [filters]);
+  }, [bakeries, filters, userLocation]);
 
-  const featuredSources = filteredSources.filter(s => s.featured);
-  const regularSources = filteredSources.filter(s => !s.featured);
+  // Create index map for numbered markers
+  const bakeryIndexMap = useMemo(() => {
+    const map = new Map<string, number>();
+    filteredBakeries.forEach((bakery, index) => {
+      map.set(bakery.id, index);
+    });
+    return map;
+  }, [filteredBakeries]);
+
+  // Bottom sheet drag handlers
+  const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    dragStartY.current = clientY;
+    dragStartState.current = sheetState;
+  };
+
+  const handleDragEnd = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = 'changedTouches' in e ? e.changedTouches[0].clientY : e.clientY;
+    const deltaY = dragStartY.current - clientY;
+    const threshold = 50;
+
+    if (deltaY > threshold) {
+      // Dragged up
+      if (dragStartState.current === 'collapsed') setSheetState('half');
+      else if (dragStartState.current === 'half') setSheetState('expanded');
+    } else if (deltaY < -threshold) {
+      // Dragged down
+      if (dragStartState.current === 'expanded') setSheetState('half');
+      else if (dragStartState.current === 'half') setSheetState('collapsed');
+    }
+  };
+
+  const getSheetHeight = () => {
+    switch (sheetState) {
+      case 'collapsed': return 'h-[15vh]';
+      case 'half': return 'h-[50vh]';
+      case 'expanded': return 'h-[85vh]';
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="bg-gradient-to-r from-amber-600 to-amber-700 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Wheat className="w-10 h-10" />
-            <div>
-              <h1 className="text-3xl font-bold">BreadFindr</h1>
-              <p className="text-amber-100 text-sm">Find local artisan bread near you</p>
-            </div>
+    <div className="h-screen bg-stone-50 flex flex-col overflow-hidden">
+      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
+            <Link to="/" className="flex items-center gap-2">
+              <Wheat className="w-7 h-7" />
+              <div>
+                <h1 className="text-xl font-bold">BreadFindr</h1>
+                <p className="text-yelp-100 text-xs hidden sm:block">Find local artisan bread near you</p>
+              </div>
+            </Link>
+            <Link
+              to="/submit"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white text-yelp-500 font-semibold rounded-lg hover:bg-yelp-50 transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Bakery</span>
+            </Link>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex flex-col md:flex-row gap-2">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search for bread, bakeries, or specialties..."
+                placeholder="Search bakeries, specialties..."
                 value={filters.query}
                 onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                className="w-full pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300 text-sm"
               />
             </div>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="City or ZIP"
-                value={filters.location}
-                onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                className="w-full md:w-48 pl-10 pr-4 py-3 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-300"
-              />
+            <div className="flex gap-2">
+              <div className="relative flex-1 md:flex-none">
+                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="City or ZIP"
+                  value={filters.location}
+                  onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                  className="w-full md:w-36 pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300 text-sm"
+                />
+                {searchingLocation && (
+                  <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-stone-400 animate-spin" />
+                )}
+              </div>
+              <button
+                onClick={handleGetCurrentLocation}
+                disabled={gettingLocation}
+                className="px-2.5 py-2 bg-yelp-600 hover:bg-yelp-700 disabled:bg-yelp-600/50 rounded-lg transition-colors"
+                title="Use my location"
+              >
+                {gettingLocation ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Navigation className="w-4 h-4" />
+                )}
+              </button>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center justify-center gap-1 px-2.5 py-2 bg-yelp-600 hover:bg-yelp-700 rounded-lg transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              </button>
             </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-amber-800 hover:bg-amber-900 rounded-lg transition-colors"
-            >
-              <Filter className="w-5 h-5" />
-              <span>Filters</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-            </button>
           </div>
 
+          {locationError && (
+            <div className="mt-2 text-yelp-100 text-xs">
+              {locationError}
+            </div>
+          )}
+
           {showFilters && (
-            <div className="mt-4 p-4 bg-amber-800/50 rounded-lg flex flex-wrap gap-4">
+            <div className="mt-2 p-3 bg-yelp-600/30 rounded-lg flex flex-wrap gap-3">
               <div>
-                <label className="block text-sm text-amber-100 mb-1">Type</label>
+                <label className="block text-xs text-yelp-100 mb-1">Type</label>
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters({ ...filters, type: e.target.value as SearchFilters['type'] })}
-                  className="px-3 py-2 rounded text-stone-800"
+                  className="px-2 py-1 rounded text-stone-800 text-sm"
                 >
                   <option value="all">All Types</option>
                   <option value="bakery">Bakeries</option>
@@ -101,11 +332,11 @@ function App() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-amber-100 mb-1">Sort By</label>
+                <label className="block text-xs text-yelp-100 mb-1">Sort By</label>
                 <select
                   value={filters.sortBy}
                   onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as SearchFilters['sortBy'] })}
-                  className="px-3 py-2 rounded text-stone-800"
+                  className="px-2 py-1 rounded text-stone-800 text-sm"
                 >
                   <option value="rating">Highest Rated</option>
                   <option value="name">Name A-Z</option>
@@ -113,16 +344,17 @@ function App() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-amber-100 mb-1">Radius</label>
+                <label className="block text-xs text-yelp-100 mb-1">Radius</label>
                 <select
                   value={filters.radius}
                   onChange={(e) => setFilters({ ...filters, radius: Number(e.target.value) })}
-                  className="px-3 py-2 rounded text-stone-800"
+                  className="px-2 py-1 rounded text-stone-800 text-sm"
                 >
-                  <option value={5}>5 miles</option>
-                  <option value={10}>10 miles</option>
-                  <option value={25}>25 miles</option>
-                  <option value={50}>50 miles</option>
+                  <option value={5}>5 mi</option>
+                  <option value={10}>10 mi</option>
+                  <option value={25}>25 mi</option>
+                  <option value={50}>50 mi</option>
+                  <option value={100}>100 mi</option>
                 </select>
               </div>
             </div>
@@ -130,250 +362,194 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-stone-600">
-            Found <span className="font-semibold text-stone-800">{filteredSources.length}</span> bread sources
-          </p>
+      {/* Desktop Split View Layout */}
+      <main className="flex-1 hidden lg:flex overflow-hidden">
+        {/* Bakery List - Left Side (40%) */}
+        <div className="w-[40%] flex flex-col border-r border-stone-200 bg-white">
+          {/* List Header */}
+          <div className="flex-shrink-0 px-4 py-3 bg-white border-b border-stone-200">
+            <div className="flex items-center justify-between">
+              <p className="text-stone-600 text-sm">
+                <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
+                {userLocation && (
+                  <span className="text-yelp-500"> near {userLocation.displayName || filters.location}</span>
+                )}
+              </p>
+              {!isSupabaseConfigured() && (
+                <span className="text-xs text-yelp-500">Demo mode</span>
+              )}
+            </div>
+          </div>
+
+          {/* Scrollable List */}
+          <div className="flex-1 overflow-y-auto p-3">
+            {loading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-6 h-6 text-yelp-500 animate-spin" />
+                <span className="ml-2 text-stone-600 text-sm">Loading...</span>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-yelp-500 text-sm">{error}</p>
+              </div>
+            ) : filteredBakeries.length === 0 ? (
+              <div className="text-center py-12">
+                <Wheat className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-stone-600 mb-1">No bakeries found</h3>
+                <p className="text-stone-500 text-sm">Try adjusting your search or filters</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredBakeries.map((bakery, index) => (
+                  <div
+                    key={bakery.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current.set(bakery.id, el);
+                    }}
+                    onMouseEnter={() => setHoveredBakeryId(bakery.id)}
+                    onMouseLeave={() => setHoveredBakeryId(null)}
+                    className={`transition-all duration-200 rounded-xl ${
+                      hoveredBakeryId === bakery.id ? 'ring-2 ring-yelp-400' : ''
+                    }`}
+                  >
+                    <BakeryCard
+                      bakery={bakery}
+                      onClick={() => setSelectedBakery(bakery)}
+                      featured={bakery.featured}
+                      listNumber={index + 1}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Footer */}
+            <footer className="mt-6 pt-4 border-t border-stone-200 text-center">
+              <p className="flex items-center justify-center gap-2 text-stone-500 text-xs">
+                <Wheat className="w-3 h-3" />
+                BreadFindr - A project by Baking Great Bread at Home
+              </p>
+            </footer>
+          </div>
         </div>
 
-        {featuredSources.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-bold text-stone-800 mb-4 flex items-center gap-2">
-              <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-              Featured
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {featuredSources.map(source => (
-                <BreadSourceCard
-                  key={source.id}
-                  source={source}
-                  onClick={() => setSelectedSource(source)}
-                  featured
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section>
-          <h2 className="text-xl font-bold text-stone-800 mb-4">All Results</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {regularSources.map(source => (
-              <BreadSourceCard
-                key={source.id}
-                source={source}
-                onClick={() => setSelectedSource(source)}
-              />
-            ))}
-          </div>
-        </section>
-
-        {filteredSources.length === 0 && (
-          <div className="text-center py-12">
-            <Wheat className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-stone-600 mb-2">No bread sources found</h3>
-            <p className="text-stone-500">Try adjusting your search or filters</p>
-          </div>
-        )}
+        {/* Map - Right Side (60%) */}
+        <div className="w-[60%] relative h-full">
+          <MapView
+            bakeries={filteredBakeries}
+            userLocation={userLocation}
+            onSelectBakery={setSelectedBakery}
+            onMarkerClick={handleMarkerClick}
+            highlightedBakeryId={hoveredBakeryId}
+            bakeryIndexMap={bakeryIndexMap}
+          />
+        </div>
       </main>
 
-      {selectedSource && (
-        <DetailModal
-          source={selectedSource}
-          onClose={() => setSelectedSource(null)}
+      {/* Mobile Layout with Draggable Bottom Sheet */}
+      <main className="flex-1 lg:hidden flex flex-col relative overflow-hidden">
+        {/* Map (full height background) */}
+        <div className="absolute inset-0">
+          <MapView
+            bakeries={filteredBakeries}
+            userLocation={userLocation}
+            onSelectBakery={setSelectedBakery}
+            onMarkerClick={handleMarkerClick}
+            highlightedBakeryId={hoveredBakeryId}
+            bakeryIndexMap={bakeryIndexMap}
+          />
+        </div>
+
+        {/* Draggable Bottom Sheet */}
+        <div
+          ref={sheetRef}
+          className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl transition-all duration-300 ease-out ${getSheetHeight()}`}
+          style={{ zIndex: 1000 }}
+        >
+          {/* Drag Handle */}
+          <div
+            className="flex flex-col items-center py-2 cursor-grab active:cursor-grabbing touch-none"
+            onTouchStart={handleDragStart}
+            onTouchEnd={handleDragEnd}
+            onMouseDown={handleDragStart}
+            onMouseUp={handleDragEnd}
+          >
+            <GripHorizontal className="w-8 h-1.5 text-stone-300" />
+            <div className="flex items-center gap-2 mt-1">
+              <button
+                onClick={() => setSheetState(sheetState === 'expanded' ? 'half' : 'expanded')}
+                className="p-1 text-stone-400"
+              >
+                <ChevronUp className={`w-4 h-4 transition-transform ${sheetState === 'expanded' ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Sheet Header */}
+          <div className="px-4 pb-2 border-b border-stone-200">
+            <div className="flex items-center justify-between">
+              <p className="text-stone-600 text-sm">
+                <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
+                {userLocation && (
+                  <span className="text-yelp-500 text-xs"> near you</span>
+                )}
+              </p>
+              <select
+                value={filters.sortBy}
+                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as SearchFilters['sortBy'] })}
+                className="text-xs border border-stone-200 rounded px-2 py-1"
+              >
+                <option value="rating">Top Rated</option>
+                <option value="distance">Nearest</option>
+                <option value="name">A-Z</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto p-3" style={{ maxHeight: 'calc(100% - 80px)' }}>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-5 h-5 text-yelp-500 animate-spin" />
+                <span className="ml-2 text-stone-600 text-sm">Loading...</span>
+              </div>
+            ) : filteredBakeries.length === 0 ? (
+              <div className="text-center py-8">
+                <Wheat className="w-10 h-10 text-stone-300 mx-auto mb-2" />
+                <p className="text-stone-500 text-sm">No bakeries found</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredBakeries.map((bakery, index) => (
+                  <div
+                    key={bakery.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current.set(bakery.id, el);
+                    }}
+                    className={`transition-all duration-200 rounded-xl ${
+                      hoveredBakeryId === bakery.id ? 'ring-2 ring-yelp-400' : ''
+                    }`}
+                  >
+                    <BakeryCard
+                      bakery={bakery}
+                      onClick={() => setSelectedBakery(bakery)}
+                      featured={bakery.featured}
+                      listNumber={index + 1}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {selectedBakery && (
+        <BakeryModal
+          bakery={selectedBakery}
+          onClose={() => setSelectedBakery(null)}
         />
       )}
-
-      <footer className="bg-stone-800 text-stone-300 py-8 mt-12">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p className="flex items-center justify-center gap-2">
-            <Wheat className="w-5 h-5" />
-            BreadFindr - A project by Baking Great Bread at Home
-          </p>
-          <p className="text-sm text-stone-500 mt-2">
-            Connecting bread lovers with local artisan bakers
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-interface BreadSourceCardProps {
-  source: BreadSource;
-  onClick: () => void;
-  featured?: boolean;
-}
-
-function BreadSourceCard({ source, onClick, featured }: BreadSourceCardProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`text-left w-full p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border ${
-        featured ? 'border-amber-300 ring-1 ring-amber-200' : 'border-stone-200'
-      }`}
-    >
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="font-semibold text-stone-800 flex items-center gap-2">
-            {source.name}
-            {source.verified && (
-              <CheckCircle className="w-4 h-4 text-green-500" />
-            )}
-          </h3>
-          <span className={`inline-block text-xs px-2 py-0.5 rounded-full mt-1 ${TYPE_COLORS[source.type]}`}>
-            {TYPE_LABELS[source.type]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1 text-amber-600">
-          <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-          <span className="font-medium">{source.rating}</span>
-          <span className="text-stone-400 text-sm">({source.reviewCount})</span>
-        </div>
-      </div>
-
-      <p className="text-sm text-stone-600 mb-3 line-clamp-2">{source.description}</p>
-
-      <div className="flex flex-wrap gap-1 mb-3">
-        {source.specialties.slice(0, 3).map(specialty => (
-          <span
-            key={specialty}
-            className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded"
-          >
-            {specialty}
-          </span>
-        ))}
-        {source.specialties.length > 3 && (
-          <span className="text-xs text-stone-400">+{source.specialties.length - 3} more</span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-1 text-sm text-stone-500">
-        <MapPin className="w-4 h-4" />
-        <span>{source.city}, {source.state}</span>
-      </div>
-    </button>
-  );
-}
-
-interface DetailModalProps {
-  source: BreadSource;
-  onClose: () => void;
-}
-
-function DetailModal({ source, onClose }: DetailModalProps) {
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div
-        className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h2 className="text-2xl font-bold text-stone-800 flex items-center gap-2">
-                {source.name}
-                {source.verified && (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                )}
-              </h2>
-              <span className={`inline-block text-sm px-3 py-1 rounded-full mt-2 ${TYPE_COLORS[source.type]}`}>
-                {TYPE_LABELS[source.type]}
-              </span>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-stone-400 hover:text-stone-600 text-2xl leading-none"
-            >
-              &times;
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-            <span className="font-semibold text-lg">{source.rating}</span>
-            <span className="text-stone-500">({source.reviewCount} reviews)</span>
-          </div>
-
-          <p className="text-stone-600 mb-6">{source.description}</p>
-
-          <div className="space-y-3 mb-6">
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-stone-400 mt-0.5" />
-              <div>
-                <p className="text-stone-800">{source.address}</p>
-                <p className="text-stone-600">{source.city}, {source.state} {source.zip}</p>
-              </div>
-            </div>
-
-            {source.hours && (
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-stone-400 mt-0.5" />
-                <p className="text-stone-600">{source.hours}</p>
-              </div>
-            )}
-
-            {source.phone && (
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-stone-400" />
-                <a href={`tel:${source.phone}`} className="text-amber-600 hover:underline">
-                  {source.phone}
-                </a>
-              </div>
-            )}
-
-            {source.website && (
-              <div className="flex items-center gap-3">
-                <ExternalLink className="w-5 h-5 text-stone-400" />
-                <a
-                  href={source.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-amber-600 hover:underline"
-                >
-                  Visit Website
-                </a>
-              </div>
-            )}
-
-            {source.instagram && (
-              <div className="flex items-center gap-3">
-                <Instagram className="w-5 h-5 text-stone-400" />
-                <a
-                  href={`https://instagram.com/${source.instagram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-amber-600 hover:underline"
-                >
-                  {source.instagram}
-                </a>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-stone-800 mb-2">Specialties</h3>
-            <div className="flex flex-wrap gap-2">
-              {source.specialties.map(specialty => (
-                <span
-                  key={specialty}
-                  className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm"
-                >
-                  {specialty}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="w-full mt-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

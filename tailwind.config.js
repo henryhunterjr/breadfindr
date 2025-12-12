@@ -7,6 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        yelp: {
+          50: '#fff1f1',
+          100: '#ffe1e1',
+          200: '#ffc7c7',
+          300: '#ffa3a3',
+          400: '#ff6b6b',
+          500: '#FF1A1A',  // Primary Yelp Red
+          600: '#D10000',  // Hover/Dark
+          700: '#b80000',
+          800: '#990000',
+          900: '#800000',
+        },
         bread: {
           50: '#fdf8f3',
           100: '#f9edd9',
