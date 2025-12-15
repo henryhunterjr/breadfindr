@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search, MapPin, Filter, ChevronDown, Wheat, Plus, Loader2, Navigation, ChevronUp, GripHorizontal } from 'lucide-react';
 import type { Bakery, SearchFilters, UserLocation } from './types';
 import { MOCK_BAKERIES } from './constants';
@@ -12,6 +12,7 @@ import MapView from './components/MapView';
 type SheetState = 'collapsed' | 'half' | 'expanded';
 
 function App() {
+  const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
     type: 'all',
@@ -42,6 +43,19 @@ function App() {
 
   // Refs for scrolling to cards
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Read URL params on mount
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const location = searchParams.get('location');
+    if (q || location) {
+      setFilters(prev => ({
+        ...prev,
+        query: q || prev.query,
+        location: location || prev.location
+      }));
+    }
+  }, [searchParams]);
 
   // Load bakeries on mount
   useEffect(() => {
