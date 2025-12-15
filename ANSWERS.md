@@ -1,6 +1,6 @@
 # Answers to Your Questions
 
-## Question 1: Are there any files waiting to be committed for the Breadfinder app?
+## Question 1: Are there any files waiting to be committed for the BreadFindr app?
 
 **Answer: NO** - There are no files waiting to be committed. The working tree is clean.
 

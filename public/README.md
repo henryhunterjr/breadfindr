@@ -16,10 +16,10 @@ To add a thumbnail or logo for your app:
    - Recommended size: 512x512 pixels or larger
    - Format: PNG with transparent background
 
-3. **Social Media Preview Images**:
-   - For Open Graph (Facebook, LinkedIn): 1200x630 pixels
-   - For Twitter Cards: 1200x600 pixels
-   - Name: `og-image.png` or `twitter-image.png`
+3. **Social Media Preview Image**:
+   - Single image works for all platforms: 1200x630 pixels
+   - Name: `og-image.png`
+   - This will be used for Facebook, LinkedIn, Twitter, etc.
 
 ## How to Upload Images
 
