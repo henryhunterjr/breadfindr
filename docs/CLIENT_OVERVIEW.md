@@ -1,6 +1,9 @@
-# BreadFindr - Client Overview
+# BreadFindr - Project Overview
 
-**Prepared for:** [Client Name]
+**A Partnership Between:**
+- **Tyler Cartner** (Wire Monkey) - Vision & Strategy
+- **Henry Hunter** (Baking Great Bread at Home) - Development & Build
+
 **Date:** December 2024
 **Version:** 1.0
 
@@ -277,5 +280,5 @@ As usage grows:
 
 ---
 
-*Document prepared by [Your Name/Company]*
-*Questions? Contact: [your email]*
+*Document prepared by Henry Hunter - Baking Great Bread at Home*
+*In partnership with Tyler Cartner - Wire Monkey*
