@@ -183,6 +183,69 @@ export async function submitReview(review: Omit<Review, 'id' | 'createdAt'>): Pr
   }
 }
 
+// Save a discovered bakery to the database (pending approval)
+export async function saveDiscoveredBakery(bakery: Bakery): Promise<{ success: boolean; error?: string }> {
+  if (!supabase) {
+    return { success: false, error: 'Database not configured' };
+  }
+
+  // Check if this bakery already exists (by google_place_id)
+  if (bakery.googlePlaceId) {
+    const { data: existing } = await supabase
+      .from('bakeries')
+      .select('id')
+      .eq('google_place_id', bakery.googlePlaceId)
+      .single();
+
+    if (existing) {
+      return { success: false, error: 'This bakery has already been saved' };
+    }
+  }
+
+  try {
+    const { error } = await supabase
+      .from('bakeries')
+      .insert({
+        name: bakery.name,
+        type: bakery.type,
+        description: bakery.description || '',
+        address: bakery.address,
+        city: bakery.city,
+        state: bakery.state,
+        zip: bakery.zip,
+        latitude: bakery.latitude,
+        longitude: bakery.longitude,
+        phone: bakery.phone,
+        website: bakery.website,
+        instagram: bakery.instagram,
+        hours: bakery.hours,
+        image_url: bakery.image,
+        specialties: bakery.specialties,
+        rating: bakery.rating || 0,
+        review_count: bakery.reviewCount || 0,
+        verified: false,
+        featured: false,
+        approved: false, // Pending admin approval
+        source: 'google_places',
+        google_place_id: bakery.googlePlaceId
+      });
+
+    if (error) {
+      console.error('Error saving discovered bakery:', error);
+      // Handle duplicate key error
+      if (error.code === '23505') {
+        return { success: false, error: 'This bakery has already been saved' };
+      }
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (e) {
+    console.error('Error saving discovered bakery:', e);
+    return { success: false, error: 'Failed to save bakery' };
+  }
+}
+
 // Transform database row to Bakery type
 function transformBakery(row: any): Bakery {
   return {
@@ -205,6 +268,8 @@ function transformBakery(row: any): Bakery {
     latitude: row.latitude ? parseFloat(row.latitude) : undefined,
     longitude: row.longitude ? parseFloat(row.longitude) : undefined,
     verified: row.verified || false,
-    featured: row.featured || false
+    featured: row.featured || false,
+    source: row.source || 'manual',
+    googlePlaceId: row.google_place_id
   };
 }

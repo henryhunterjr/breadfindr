@@ -24,6 +24,9 @@ CREATE TABLE IF NOT EXISTS bakeries (
   verified BOOLEAN DEFAULT false,
   featured BOOLEAN DEFAULT false,
   approved BOOLEAN DEFAULT false,
+  -- Source tracking for auto-discovered bakeries
+  source TEXT DEFAULT 'manual' CHECK (source IN ('manual', 'google_places', 'user_submitted')),
+  google_place_id TEXT UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -61,6 +64,7 @@ CREATE POLICY "Anyone can submit reviews" ON reviews
 -- Create index for location-based queries
 CREATE INDEX IF NOT EXISTS bakeries_location_idx ON bakeries (city, state);
 CREATE INDEX IF NOT EXISTS bakeries_approved_idx ON bakeries (approved);
+CREATE INDEX IF NOT EXISTS bakeries_google_place_id_idx ON bakeries (google_place_id);
 CREATE INDEX IF NOT EXISTS reviews_bakery_idx ON reviews (bakery_id);
 
 -- Function to update bakery rating when a review is added
