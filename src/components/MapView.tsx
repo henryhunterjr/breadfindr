@@ -17,6 +17,7 @@ const markerColors: Record<string, string> = {
   bakery: '#FF1A1A',
   farmers_market: '#16a34a',
   home_baker: '#9333ea',
+  discovered: '#3b82f6', // Blue for discovered bakeries
 };
 
 interface MapViewProps {
@@ -165,8 +166,10 @@ export default function MapView({
         {/* Bakery markers */}
         {mappableBakeries.map((bakery) => {
           const isHighlighted = highlightedBakeryId === bakery.id;
+          const isDiscovered = bakery.source === 'google_places';
           const listNumber = (bakeryIndexMap?.get(bakery.id) ?? 0) + 1;
-          const icon = createNumberedIcon(listNumber, markerColors[bakery.type] || '#d97706', isHighlighted);
+          const markerColor = isDiscovered ? markerColors.discovered : (markerColors[bakery.type] || '#d97706');
+          const icon = createNumberedIcon(listNumber, markerColor, isHighlighted);
 
           return (
             <Marker
@@ -181,19 +184,28 @@ export default function MapView({
               <Popup>
                 <div className="min-w-[180px] py-1">
                   <h3 className="font-semibold text-stone-800">{bakery.name}</h3>
-                  <span className={`inline-block text-xs px-2 py-0.5 rounded-full mt-1 ${
-                    bakery.type === 'bakery' ? 'bg-amber-100 text-amber-800' :
-                    bakery.type === 'farmers_market' ? 'bg-green-100 text-green-800' :
-                    'bg-purple-100 text-purple-800'
-                  }`}>
-                    {TYPE_LABELS[bakery.type]}
-                  </span>
-
-                  <div className="flex items-center gap-1 mt-2 text-amber-600 text-sm">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span className="font-medium">{bakery.rating}</span>
-                    <span className="text-stone-400">({bakery.reviewCount})</span>
+                  <div className="flex gap-1 mt-1 flex-wrap">
+                    <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${
+                      bakery.type === 'bakery' ? 'bg-amber-100 text-amber-800' :
+                      bakery.type === 'farmers_market' ? 'bg-green-100 text-green-800' :
+                      'bg-purple-100 text-purple-800'
+                    }`}>
+                      {TYPE_LABELS[bakery.type]}
+                    </span>
+                    {isDiscovered && (
+                      <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                        Discovered
+                      </span>
+                    )}
                   </div>
+
+                  {bakery.rating > 0 && (
+                    <div className="flex items-center gap-1 mt-2 text-amber-600 text-sm">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <span className="font-medium">{bakery.rating.toFixed(1)}</span>
+                      <span className="text-stone-400">({bakery.reviewCount})</span>
+                    </div>
+                  )}
 
                   <div className="flex items-center gap-1 mt-1 text-xs text-stone-500">
                     <MapPin className="w-3 h-3" />
@@ -221,7 +233,7 @@ export default function MapView({
 
       {/* Legend */}
       <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md z-[1000]">
-        <div className="flex gap-3 text-xs">
+        <div className="flex flex-wrap gap-3 text-xs">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-yelp-500"></div>
             <span>Bakery</span>
@@ -233,6 +245,10 @@ export default function MapView({
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-purple-600"></div>
             <span>Home</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span>Discovered</span>
           </div>
         </div>
       </div>

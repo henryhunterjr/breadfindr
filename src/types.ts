@@ -20,6 +20,9 @@ export interface Bakery {
   verified: boolean;
   featured: boolean;
   distance?: number; // Calculated client-side
+  // Fields for auto-discovered bakeries
+  source?: 'manual' | 'google_places' | 'user_submitted';
+  googlePlaceId?: string;
 }
 
 // Keep BreadSource as alias for backwards compatibility
