@@ -120,6 +120,95 @@ export function getPhotoUrl(photoReference: string, maxWidth: number = 400): str
     `maxwidth=${maxWidth}&photo_reference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
 }
 
+/**
+ * Enrichment result from Google Places
+ */
+interface EnrichmentResult {
+  found: boolean;
+  place_id?: string;
+  name?: string;
+  formatted_address?: string;
+  rating?: number;
+  user_ratings_total?: number;
+  photo_reference?: string | null;
+  photoUrl?: string;
+}
+
+/**
+ * Find and enrich a bakery with Google Places data
+ * Use this to get real photos for database bakeries
+ */
+export async function enrichBakeryWithGoogle(
+  name: string,
+  lat?: number,
+  lng?: number,
+  address?: string
+): Promise<EnrichmentResult> {
+  try {
+    const params = new URLSearchParams({ name });
+    if (lat && lng) {
+      params.set('lat', lat.toString());
+      params.set('lng', lng.toString());
+    }
+    if (address) {
+      params.set('address', address);
+    }
+
+    const response = await fetch(`/api/places/find?${params.toString()}`);
+    const data = await response.json();
+
+    if (data.found && data.photo_reference) {
+      return {
+        ...data,
+        photoUrl: getPhotoUrl(data.photo_reference)
+      };
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error enriching bakery:', error);
+    return { found: false };
+  }
+}
+
+/**
+ * Enrich multiple bakeries in parallel
+ * Returns a map of bakery ID to enrichment result
+ */
+export async function enrichBakeries(
+  bakeries: Array<{ id: string; name: string; latitude?: number; longitude?: number; city?: string; state?: string }>
+): Promise<Map<string, EnrichmentResult>> {
+  const results = new Map<string, EnrichmentResult>();
+
+  // Process in batches to avoid rate limiting
+  const batchSize = 5;
+  for (let i = 0; i < bakeries.length; i += batchSize) {
+    const batch = bakeries.slice(i, i + batchSize);
+    const promises = batch.map(async (bakery) => {
+      const address = [bakery.city, bakery.state].filter(Boolean).join(', ');
+      const result = await enrichBakeryWithGoogle(
+        bakery.name,
+        bakery.latitude,
+        bakery.longitude,
+        address
+      );
+      return { id: bakery.id, result };
+    });
+
+    const batchResults = await Promise.all(promises);
+    batchResults.forEach(({ id, result }) => {
+      results.set(id, result);
+    });
+
+    // Small delay between batches to be nice to the API
+    if (i + batchSize < bakeries.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+  }
+
+  return results;
+}
+
 // --- Internal Functions ---
 
 async function nearbySearch(
