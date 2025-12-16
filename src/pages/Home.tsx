@@ -705,10 +705,10 @@ export default function Home() {
               <p className="text-stone-400 mb-6">
                 Get notified about new bakeries, bread tips, and community highlights.
               </p>
-              <div className="bg-stone-700 rounded-lg overflow-hidden" style={{ minHeight: '120px' }}>
+              <div className="bg-stone-700 rounded-lg overflow-hidden" style={{ minHeight: '200px' }}>
                 <iframe
                   width="100%"
-                  height="120"
+                  height="200"
                   scrolling="no"
                   frameBorder="0"
                   src="https://bakinggreatbread.blog/?mailpoet_form_iframe=1005"
