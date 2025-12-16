@@ -6,11 +6,11 @@ export default function About() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white py-6">
+      <header className="bg-gradient-to-r from-bakery-500 to-bakery-600 text-white py-6">
         <div className="max-w-4xl mx-auto px-4">
           <Link
             to="/"
-            className="flex items-center gap-2 text-yelp-100 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-bakery-100 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to BreadFindr
@@ -19,7 +19,7 @@ export default function About() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">About BreadFindr</h1>
-              <p className="text-yelp-100 text-sm">Our story and mission</p>
+              <p className="text-bakery-100 text-sm">Our story and mission</p>
             </div>
           </div>
         </div>
@@ -69,8 +69,8 @@ export default function About() {
           {/* Mission Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-              <div className="w-12 h-12 bg-yelp-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-6 h-6 text-yelp-500" />
+              <div className="w-12 h-12 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-6 h-6 text-bakery-500" />
               </div>
               <h4 className="font-semibold text-stone-800 mb-2">Support Local</h4>
               <p className="text-stone-600 text-sm">
@@ -101,7 +101,7 @@ export default function About() {
           <div className="bg-stone-800 text-white rounded-2xl p-8">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="w-32 h-32 bg-stone-700 rounded-full flex items-center justify-center flex-shrink-0">
-                <Wheat className="w-16 h-16 text-yelp-500" />
+                <Wheat className="w-16 h-16 text-bakery-500" />
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-2">About the Creator</h3>
@@ -114,7 +114,7 @@ export default function About() {
                   href="https://bakinggreatbread.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-yelp-400 hover:text-yelp-300 transition-colors"
+                  className="inline-flex items-center gap-2 text-yelp-400 hover:text-bakery-300 transition-colors"
                 >
                   Visit Baking Great Bread at Home
                   <ArrowLeft className="w-4 h-4 rotate-180" />

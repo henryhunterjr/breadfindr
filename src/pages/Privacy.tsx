@@ -6,11 +6,11 @@ export default function Privacy() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white py-6">
+      <header className="bg-gradient-to-r from-bakery-500 to-bakery-600 text-white py-6">
         <div className="max-w-4xl mx-auto px-4">
           <Link
             to="/"
-            className="flex items-center gap-2 text-yelp-100 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-bakery-100 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to BreadFindr
@@ -19,7 +19,7 @@ export default function Privacy() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">Privacy Policy</h1>
-              <p className="text-yelp-100 text-sm">Last updated: January 2025</p>
+              <p className="text-bakery-100 text-sm">Last updated: January 2025</p>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Privacy() {
               <h2>Contact Us</h2>
               <p>
                 If you have questions about this Privacy Policy, please contact us at{' '}
-                <a href="mailto:privacy@breadfindr.com" className="text-yelp-500 hover:underline">
+                <a href="mailto:privacy@breadfindr.com" className="text-bakery-500 hover:underline">
                   privacy@breadfindr.com
                 </a>
               </p>

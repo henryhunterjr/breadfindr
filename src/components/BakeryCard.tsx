@@ -10,7 +10,7 @@ interface BakeryCardProps {
 }
 
 export default function BakeryCard({ bakery, onClick, featured, listNumber }: BakeryCardProps) {
-  const typeColor = bakery.type === 'bakery' ? 'bg-yelp-500' :
+  const typeColor = bakery.type === 'bakery' ? 'bg-bakery-500' :
                     bakery.type === 'farmers_market' ? 'bg-green-600' : 'bg-purple-600';
 
   const isDiscovered = bakery.source === 'google_places';
@@ -19,7 +19,7 @@ export default function BakeryCard({ bakery, onClick, featured, listNumber }: Ba
     <button
       onClick={onClick}
       className={`text-left w-full p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border flex gap-3 ${
-        featured ? 'border-yelp-300 ring-1 ring-yelp-200' :
+        featured ? 'border-yelp-300 ring-1 ring-bakery-200' :
         isDiscovered ? 'border-blue-200 bg-blue-50/30' : 'border-stone-200'
       }`}
     >
@@ -78,7 +78,7 @@ export default function BakeryCard({ bakery, onClick, featured, listNumber }: Ba
             </div>
           </div>
           {bakery.distance !== undefined && (
-            <span className="text-yelp-500 font-semibold text-sm flex-shrink-0">
+            <span className="text-bakery-500 font-semibold text-sm flex-shrink-0">
               {bakery.distance.toFixed(1)} mi
             </span>
           )}

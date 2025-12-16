@@ -220,7 +220,7 @@ export default function MapView({
                       e.stopPropagation();
                       onSelectBakery(bakery);
                     }}
-                    className="mt-2 w-full px-3 py-1.5 bg-yelp-500 hover:bg-yelp-600 text-white text-xs font-medium rounded-lg transition-colors"
+                    className="mt-2 w-full px-3 py-1.5 bg-bakery-500 hover:bg-bakery-600 text-white text-xs font-medium rounded-lg transition-colors"
                   >
                     View Details
                   </button>
@@ -235,7 +235,7 @@ export default function MapView({
       <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md z-[1000]">
         <div className="flex flex-wrap gap-3 text-xs">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-yelp-500"></div>
+            <div className="w-3 h-3 rounded-full bg-bakery-500"></div>
             <span>Bakery</span>
           </div>
           <div className="flex items-center gap-1">
