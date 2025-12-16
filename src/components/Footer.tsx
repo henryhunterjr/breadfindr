@@ -99,6 +99,11 @@ export default function Footer() {
                   Terms of Service
                 </Link>
               </li>
+              <li>
+                <Link to="/admin/dashboard" className="text-stone-500 hover:text-stone-400 transition-colors text-sm">
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
 

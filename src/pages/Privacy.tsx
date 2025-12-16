@@ -19,7 +19,7 @@ export default function Privacy() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">Privacy Policy</h1>
-              <p className="text-bakery-100 text-sm">Last updated: January 2025</p>
+              <p className="text-bakery-100 text-sm">Last Updated: December 15, 2025</p>
             </div>
           </div>
         </div>
@@ -30,105 +30,86 @@ export default function Privacy() {
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <div className="prose prose-stone max-w-none">
-              <h2>Introduction</h2>
-              <p>
-                BreadFindr ("we," "our," or "us") is committed to protecting your privacy.
-                This Privacy Policy explains how we collect, use, disclose, and safeguard your
-                information when you visit our website and use our services.
+              <p className="text-stone-600 mb-6">
+                Your privacy matters to us. This Privacy Policy explains how BreadFindr collects, uses, and protects your information.
               </p>
 
-              <h2>Information We Collect</h2>
-              <h3>Information You Provide</h3>
-              <p>We may collect information you voluntarily provide, including:</p>
+              <h2>1. Information We Collect</h2>
+
+              <h3>For Users (Bread Seekers):</h3>
               <ul>
-                <li>Name and email address when submitting a bakery or contact form</li>
-                <li>Review content and ratings you submit</li>
-                <li>Bakery information you submit for listing</li>
-                <li>Newsletter subscription email addresses</li>
+                <li>We do not require account creation to search the directory</li>
+                <li>We may collect anonymized usage data (such as search terms and location filters) to improve the app</li>
+                <li>We do not sell or share personal information</li>
               </ul>
 
-              <h3>Automatically Collected Information</h3>
-              <p>When you visit our website, we may automatically collect:</p>
+              <h3>For Bakers (Listing Submissions):</h3>
               <ul>
-                <li>Browser type and version</li>
-                <li>Operating system</li>
-                <li>Pages visited and time spent</li>
-                <li>Referring website addresses</li>
-                <li>Approximate geographic location (city/region level)</li>
+                <li>When you submit a listing, we collect the information you provide: business name, location, contact information, social media links, product types, and any other details you choose to share</li>
+                <li>This information is displayed publicly in the directory</li>
+                <li>By submitting, you consent to public display of your listing information</li>
               </ul>
 
-              <h3>Location Information</h3>
+              <h2>2. Location Data</h2>
               <p>
-                With your permission, we may collect your precise location to show nearby bakeries.
-                You can disable location services through your browser settings at any time.
+                BreadFindr may use your general location (city, state, or zip code) to show nearby bakers.
+                We do not track precise GPS location or store location history.
               </p>
 
-              <h2>How We Use Your Information</h2>
-              <p>We use the information we collect to:</p>
-              <ul>
-                <li>Provide and maintain our service</li>
-                <li>Display bakery listings and reviews</li>
-                <li>Send newsletters (if subscribed)</li>
-                <li>Respond to your inquiries</li>
-                <li>Improve our website and user experience</li>
-                <li>Detect and prevent fraud or abuse</li>
-              </ul>
-
-              <h2>Information Sharing</h2>
-              <p>We do not sell your personal information. We may share information with:</p>
-              <ul>
-                <li>Service providers who assist in operating our website</li>
-                <li>Law enforcement when required by law</li>
-                <li>Other parties with your consent</li>
-              </ul>
-
-              <h2>Data Security</h2>
+              <h2>3. Cookies and Analytics</h2>
               <p>
-                We implement reasonable security measures to protect your information.
-                However, no internet transmission is completely secure, and we cannot
-                guarantee absolute security.
+                We use Vercel Analytics to understand general usage patterns such as page views and search activity.
+                This data is anonymized and does not identify individual users. We do not use cookies for advertising or tracking.
               </p>
 
-              <h2>Your Rights</h2>
-              <p>You have the right to:</p>
-              <ul>
-                <li>Access your personal information</li>
-                <li>Request correction of inaccurate data</li>
-                <li>Request deletion of your data</li>
-                <li>Opt out of marketing communications</li>
-                <li>Disable location tracking</li>
-              </ul>
-
-              <h2>Cookies</h2>
+              <h2>4. Third-Party Links</h2>
               <p>
-                We use cookies and similar technologies to improve your experience,
-                analyze traffic, and remember your preferences. You can control cookies
-                through your browser settings.
+                BreadFindr contains links to third-party websites, including baker websites, social media pages,
+                and affiliate partners. These sites have their own privacy policies. We are not responsible for their practices.
               </p>
 
-              <h2>Third-Party Links</h2>
+              <h2>5. Data Security</h2>
               <p>
-                Our website may contain links to third-party websites. We are not
-                responsible for the privacy practices of these external sites.
+                We take reasonable measures to protect the information collected through BreadFindr.
+                However, no internet transmission is 100% secure. Baker listing information is public by design.
               </p>
 
-              <h2>Children's Privacy</h2>
+              <h2>6. Data Retention</h2>
               <p>
-                Our service is not directed to children under 13. We do not knowingly
-                collect information from children under 13.
+                Baker listing information remains in the directory until the baker requests removal.
+                Anonymized analytics data is retained for up to 12 months.
               </p>
 
-              <h2>Changes to This Policy</h2>
+              <h2>7. Children's Privacy</h2>
               <p>
-                We may update this Privacy Policy periodically. We will notify you of
-                significant changes by posting the new policy on this page.
+                BreadFindr is not directed at children under 13. We do not knowingly collect information from children.
               </p>
 
-              <h2>Contact Us</h2>
+              <h2>8. Do Not Track</h2>
               <p>
-                If you have questions about this Privacy Policy, please contact us at{' '}
-                <a href="mailto:privacy@breadfindr.com" className="text-bakery-500 hover:underline">
-                  privacy@breadfindr.com
+                BreadFindr does not currently respond to "Do Not Track" browser signals, as we do not track
+                individual users across third-party websites.
+              </p>
+
+              <h2>9. Your Rights</h2>
+              <p>
+                If you are a listed baker and wish to update or remove your listing, contact us at{' '}
+                <a href="mailto:henrysbreadkitchen@gmail.com" className="text-bakery-500 hover:underline">
+                  henrysbreadkitchen@gmail.com
+                </a>{' '}
+                and we will process your request promptly.
+              </p>
+
+              <h2>10. Changes to This Policy</h2>
+              <p>
+                We may update this Privacy Policy from time to time. Changes will be reflected on this page with an updated date.
+              </p>
+
+              <h2>11. Contact</h2>
+              <p>
+                If you have questions about this Privacy Policy, contact us at{' '}
+                <a href="mailto:henrysbreadkitchen@gmail.com" className="text-bakery-500 hover:underline">
+                  henrysbreadkitchen@gmail.com
                 </a>
               </p>
             </div>

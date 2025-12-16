@@ -19,7 +19,7 @@ export default function Terms() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">Terms of Service</h1>
-              <p className="text-bakery-100 text-sm">Last updated: January 2025</p>
+              <p className="text-bakery-100 text-sm">Last Updated: December 15, 2025</p>
             </div>
           </div>
         </div>
@@ -30,107 +30,90 @@ export default function Terms() {
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <div className="prose prose-stone max-w-none">
-              <h2>Agreement to Terms</h2>
-              <p>
-                By accessing or using BreadFindr, you agree to be bound by these Terms of Service.
-                If you disagree with any part of these terms, you may not access our service.
+              <p className="text-stone-600 mb-6">
+                Welcome to BreadFindr. By accessing or using this application, you agree to the following terms.
               </p>
 
-              <h2>Description of Service</h2>
+              <h2>1. Acceptance of Terms</h2>
               <p>
-                BreadFindr is a community-driven directory that helps users discover artisan
-                bakeries, farmers markets with bread vendors, and home bakers. Our service
-                includes bakery listings, reviews, location-based search, and related features.
+                By using BreadFindr, you agree to be bound by these Terms of Service. If you do not agree,
+                please do not use the application.
               </p>
 
-              <h2>User Accounts</h2>
+              <h2>2. Description of Service</h2>
               <p>
-                Some features may require you to provide information. You are responsible for:
+                BreadFindr is a free directory connecting consumers with local artisan bread bakers. The app
+                is provided "as is" for informational purposes. We do not sell bread, process transactions,
+                or guarantee the availability of any baker or product listed.
               </p>
+
+              <h2>3. Baker Listings</h2>
+              <p>
+                Bakers may submit their information for inclusion in the directory. By submitting, bakers
+                confirm they have the legal right to sell baked goods in their jurisdiction and that all
+                information provided is accurate. We reserve the right to remove any listing at our discretion.
+              </p>
+
+              <h2>4. User Conduct</h2>
+              <p>You agree not to use BreadFindr to:</p>
               <ul>
-                <li>Providing accurate and complete information</li>
-                <li>Maintaining the confidentiality of any account credentials</li>
-                <li>All activities that occur under your account</li>
+                <li>Submit false or misleading information</li>
+                <li>Harass, spam, or harm bakers or other users</li>
+                <li>Scrape, copy, or reproduce directory data for commercial purposes</li>
+                <li>Attempt to interfere with the app's functionality</li>
               </ul>
 
-              <h2>User Content</h2>
-              <h3>Reviews and Submissions</h3>
-              <p>By submitting content (reviews, bakery listings, etc.), you:</p>
-              <ul>
-                <li>Grant us a non-exclusive, worldwide license to use, display, and distribute your content</li>
-                <li>Represent that you own or have rights to the content</li>
-                <li>Agree not to submit false, misleading, or defamatory content</li>
-              </ul>
-
-              <h3>Prohibited Content</h3>
-              <p>You may not submit content that:</p>
-              <ul>
-                <li>Is illegal, harmful, or offensive</li>
-                <li>Infringes on intellectual property rights</li>
-                <li>Contains spam, advertising, or promotional material</li>
-                <li>Impersonates others or misrepresents your identity</li>
-                <li>Contains malware or harmful code</li>
-              </ul>
-
-              <h2>Bakery Listings</h2>
+              <h2>5. Affiliate Links and Partnerships</h2>
               <p>
-                Bakery information is provided by users and business owners. While we strive
-                for accuracy, we do not guarantee the completeness or accuracy of listings.
-                Always verify business information directly with the bakery.
+                BreadFindr may contain links to affiliate partners and sponsors. When you click these links
+                and make a purchase, we may earn a small commission at no additional cost to you. We only
+                partner with brands we trust.
               </p>
 
-              <h2>Intellectual Property</h2>
+              <h2>6. No Endorsement or Guarantee</h2>
               <p>
-                The BreadFindr name, logo, and website design are our intellectual property.
-                You may not use our branding without written permission.
+                Listing a baker on BreadFindr does not constitute an endorsement. We do not verify licensing,
+                food safety compliance, or product quality. Users are responsible for their own due diligence
+                when purchasing from any baker.
               </p>
 
-              <h2>Disclaimers</h2>
+              <h2>7. Limitation of Liability</h2>
               <p>
-                BreadFindr is provided "as is" without warranties of any kind. We do not
-                guarantee that our service will be uninterrupted, secure, or error-free.
-              </p>
-              <p>
-                We are not responsible for:
-              </p>
-              <ul>
-                <li>The quality or safety of products from listed bakeries</li>
-                <li>Accuracy of user-submitted reviews or business information</li>
-                <li>Any transactions between users and bakeries</li>
-                <li>Third-party content or websites linked from our service</li>
-              </ul>
-
-              <h2>Limitation of Liability</h2>
-              <p>
-                To the maximum extent permitted by law, BreadFindr shall not be liable for
-                any indirect, incidental, special, or consequential damages arising from
-                your use of our service.
+                BreadFindr is provided without warranties of any kind. We are not liable for any damages
+                arising from your use of this application, interactions with bakers, or reliance on its content.
               </p>
 
-              <h2>Indemnification</h2>
+              <h2>8. Intellectual Property</h2>
               <p>
-                You agree to indemnify and hold harmless BreadFindr from any claims, damages,
-                or expenses arising from your use of our service or violation of these terms.
+                All content within BreadFindr, including text, images, logos, and design, is owned by
+                Baking Great Bread at Home or used with permission. You may not reproduce, distribute,
+                or sell any content without written permission.
               </p>
 
-              <h2>Modifications</h2>
+              <h2>9. Changes to Terms</h2>
               <p>
-                We reserve the right to modify or discontinue our service at any time.
-                We may also update these Terms of Service, and continued use constitutes
-                acceptance of any changes.
+                We reserve the right to update these Terms of Service at any time. Continued use of the
+                application after changes constitutes acceptance of the new terms.
               </p>
 
-              <h2>Governing Law</h2>
+              <h2>10. Dispute Resolution</h2>
               <p>
-                These terms shall be governed by the laws of the United States, without
-                regard to conflict of law provisions.
+                BreadFindr is a directory service only. Any disputes between users and bakers are between
+                those parties. We are not responsible for resolving complaints, refunds, or disputes related
+                to purchases made outside our platform.
               </p>
 
-              <h2>Contact</h2>
+              <h2>11. Governing Law</h2>
               <p>
-                For questions about these Terms of Service, contact us at{' '}
-                <a href="mailto:legal@breadfindr.com" className="text-bakery-500 hover:underline">
-                  legal@breadfindr.com
+                These Terms are governed by the laws of the State of Illinois, without regard to conflict
+                of law principles.
+              </p>
+
+              <h2>12. Contact</h2>
+              <p>
+                Questions about these terms? Contact us at{' '}
+                <a href="mailto:henrysbreadkitchen@gmail.com" className="text-bakery-500 hover:underline">
+                  henrysbreadkitchen@gmail.com
                 </a>
               </p>
             </div>
