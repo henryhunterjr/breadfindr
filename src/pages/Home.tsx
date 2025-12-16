@@ -24,6 +24,7 @@ import {
 import { getCurrentPosition, reverseGeocode } from '../lib/geocoding';
 import { fetchBakeries, isSupabaseConfigured } from '../lib/supabase';
 import { enrichBakeries } from '../lib/googlePlaces';
+import { trackPageView, trackEvent } from '../lib/analytics';
 import type { Bakery } from '../types';
 import Footer from '../components/Footer';
 
@@ -127,6 +128,11 @@ export default function Home() {
   const [featuredBakeries, setFeaturedBakeries] = useState<Bakery[]>([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
 
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView('/');
+  }, []);
+
   // Fetch real bakeries for featured section
   useEffect(() => {
     async function loadFeaturedBakeries() {
@@ -195,6 +201,7 @@ export default function Home() {
 
   const handleNearMe = async () => {
     setGettingLocation(true);
+    trackEvent({ event: 'near_me_click', page: '/' });
     try {
       const position = await getCurrentPosition();
       const locationName = await reverseGeocode(position.lat, position.lng);
@@ -209,12 +216,14 @@ export default function Home() {
   };
 
   const handleStateClick = (state: string) => {
+    trackEvent({ event: 'location_search', search_location: state });
     navigate(`/search?location=${encodeURIComponent(state)}`);
   };
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) {
+      trackEvent({ event: 'newsletter_signup' });
       setSubscribed(true);
       setEmail('');
     }

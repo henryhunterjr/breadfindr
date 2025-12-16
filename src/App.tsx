@@ -6,6 +6,7 @@ import { MOCK_BAKERIES } from './constants';
 import { fetchBakeries, isSupabaseConfigured } from './lib/supabase';
 import { geocodeLocation, calculateDistance, getCurrentPosition, reverseGeocode } from './lib/geocoding';
 import { searchNearbyBakeries, isGooglePlacesConfigured, enrichBakeries } from './lib/googlePlaces';
+import { trackPageView, trackSearch, trackBakeryView, trackEvent } from './lib/analytics';
 import BakeryCard from './components/BakeryCard';
 import BakeryModal from './components/BakeryModal';
 import MapView from './components/MapView';
@@ -70,6 +71,11 @@ function App() {
       }
     }
   }, [searchParams, bakeries]);
+
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView('/search');
+  }, []);
 
   // Load bakeries on mount
   useEffect(() => {
@@ -155,6 +161,9 @@ function App() {
     setSearchingLocation(true);
     setLocationError(null);
 
+    // Track the search
+    trackSearch(filters.query, filters.location);
+
     const location = await geocodeLocation(filters.location);
 
     if (location) {
@@ -165,7 +174,7 @@ function App() {
     }
 
     setSearchingLocation(false);
-  }, [filters.location]);
+  }, [filters.location, filters.query]);
 
   // Debounced location search
   useEffect(() => {
@@ -221,6 +230,9 @@ function App() {
     setGettingLocation(true);
     setLocationError(null);
 
+    // Track near me click
+    trackEvent({ event: 'near_me_click' });
+
     try {
       const position = await getCurrentPosition();
       const displayName = await reverseGeocode(position.lat, position.lng);
@@ -255,6 +267,13 @@ function App() {
       setSheetState('half');
     }
   };
+
+  // Track bakery views when modal opens
+  useEffect(() => {
+    if (selectedBakery) {
+      trackBakeryView(selectedBakery.id, selectedBakery.name);
+    }
+  }, [selectedBakery]);
 
   // Filter and sort bakeries (including discovered ones)
   const filteredBakeries = useMemo(() => {
