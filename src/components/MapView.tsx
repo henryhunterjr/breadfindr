@@ -308,7 +308,7 @@ export default function MapView({
         <div className="flex flex-wrap gap-3 text-xs">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-bakery-500"></div>
-            <span>Bakery</span>
+            <span>Storefront</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-green-600"></div>
@@ -316,7 +316,7 @@ export default function MapView({
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-purple-600"></div>
-            <span>Home</span>
+            <span>Cottage</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-blue-500"></div>

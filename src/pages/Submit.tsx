@@ -49,6 +49,7 @@ export default function Submit() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [complianceAgreed, setComplianceAgreed] = useState(false);
 
   const totalSteps = 5;
 
@@ -125,7 +126,7 @@ export default function Submit() {
       case 4:
         return true; // Details are optional
       case 5:
-        return true; // Review step
+        return complianceAgreed; // Review step - must agree to compliance
       default:
         return false;
     }
@@ -241,9 +242,9 @@ export default function Submit() {
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { value: 'bakery', label: 'Bakery' },
-                    { value: 'farmers_market', label: 'Farmers Market' },
-                    { value: 'home_baker', label: 'Home Baker' }
+                    { value: 'bakery', label: 'Storefront Bakery' },
+                    { value: 'farmers_market', label: 'Market Vendor' },
+                    { value: 'home_baker', label: 'Cottage Baker' }
                   ].map((option) => (
                     <button
                       key={option.value}
@@ -530,6 +531,23 @@ export default function Submit() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Compliance Agreement */}
+              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={complianceAgreed}
+                    onChange={(e) => setComplianceAgreed(e.target.checked)}
+                    className="mt-1 w-4 h-4 text-bakery-500 border-stone-300 rounded focus:ring-bakery-500"
+                  />
+                  <span className="text-sm text-stone-700">
+                    By submitting this listing, I confirm that I am operating legally under my state's
+                    regulations for selling baked goods, including any required licenses, permits, or
+                    cottage food law compliance.
+                  </span>
+                </label>
               </div>
             </div>
           )}

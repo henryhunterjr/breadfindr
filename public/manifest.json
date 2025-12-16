@@ -1,7 +1,7 @@
 {
   "name": "BreadFindr - Find Local Artisan Bread",
   "short_name": "BreadFindr",
-  "description": "Discover local bakeries, farmers markets, and home bakers selling fresh artisan bread in your area.",
+  "description": "Discover local storefront bakeries, farmers market vendors, and cottage bakers selling fresh artisan bread in your area.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fefdfb",

@@ -93,7 +93,7 @@ const PARTNERS = [
 const FAQ_ITEMS = [
   {
     question: 'How do I find artisan bread near me?',
-    answer: 'Simply enter your city, ZIP code, or use the "Near Me" button to find local bakeries, farmers markets, and home bakers in your area. You can filter by bread type and sort by distance or rating.'
+    answer: 'Simply enter your city, ZIP code, or use the "Near Me" button to find local storefront bakeries, market vendors, and cottage bakers in your area. You can filter by bread type and sort by distance or rating.'
   },
   {
     question: 'Is BreadFindr free to use?',
@@ -105,7 +105,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'What types of bakers are listed?',
-    answer: 'We feature commercial bakeries, farmers market vendors, and cottage/home bakers. All bakers focus on artisan, naturally-leavened, or traditionally-made breads.'
+    answer: 'We feature storefront bakeries, farmers market vendors, and cottage bakers (home-based bakers operating in compliance with their state\'s cottage food or home bakery regulations). All bakers focus on artisan, naturally-leavened, or traditionally-made breads.'
   },
   {
     question: 'How do I leave a review?',
@@ -272,7 +272,7 @@ export default function Home() {
             Find Real Bread Near You
           </h2>
           <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto drop-shadow">
-            Discover local artisan bakeries, farmers market vendors, and home bakers
+            Discover local artisan bakeries, farmers market vendors, and cottage bakers
             crafting authentic sourdough and naturally-leavened breads.
           </p>
 
@@ -547,7 +547,7 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold text-stone-800 mb-2">Support Local Artisans</h4>
                 <p className="text-stone-600 text-sm">
-                  Help small bakeries and home bakers thrive by connecting them with bread lovers in their community.
+                  Help small bakeries and cottage bakers thrive by connecting them with bread lovers in their community.
                 </p>
               </div>
             </div>

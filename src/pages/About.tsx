@@ -147,7 +147,7 @@ export default function About() {
               </div>
               <h4 className="font-semibold text-stone-800 mb-2">Support Local</h4>
               <p className="text-stone-600 text-sm">
-                Help small bakeries and home bakers thrive by connecting them with bread lovers in their community.
+                Help small bakeries and cottage bakers thrive by connecting them with bread lovers in their community.
               </p>
             </div>
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">

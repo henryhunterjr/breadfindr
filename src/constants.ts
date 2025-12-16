@@ -270,9 +270,9 @@ export const MOCK_BAKERIES: Bakery[] = [
 export const MOCK_BREAD_SOURCES = MOCK_BAKERIES;
 
 export const TYPE_LABELS = {
-  bakery: 'Bakery',
-  farmers_market: 'Farmers Market',
-  home_baker: 'Home Baker'
+  bakery: 'Storefront Bakery',
+  farmers_market: 'Market Vendor',
+  home_baker: 'Cottage Baker'
 };
 
 export const TYPE_COLORS = {

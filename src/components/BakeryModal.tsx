@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, MapPin, Clock, Phone, ExternalLink, Instagram, CheckCircle, X, Send, Loader2, ChevronLeft, Globe, Database } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ExternalLink, Instagram, CheckCircle, X, Send, Loader2, ChevronLeft, Globe, Database, Info } from 'lucide-react';
 import type { Bakery, Review } from '../types';
 import { TYPE_LABELS, TYPE_COLORS } from '../constants';
 import { fetchReviews, submitReview, saveDiscoveredBakery, isSupabaseConfigured } from '../lib/supabase';
@@ -269,6 +269,19 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                   </div>
                 )}
               </div>
+
+              {/* Cottage Baker Disclaimer */}
+              {bakery.type === 'home_baker' && (
+                <div className="mb-5 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-purple-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-purple-700">
+                      This baker operates as a home-based business. Cottage food regulations vary by state.
+                      Please confirm licensing and food safety practices directly with the baker.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Specialties */}
               <div className="mb-5">

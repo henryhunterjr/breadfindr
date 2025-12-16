@@ -467,9 +467,9 @@ function App() {
                   className="px-2 py-1 rounded text-stone-800 text-sm"
                 >
                   <option value="all">All Types</option>
-                  <option value="bakery">Bakeries</option>
-                  <option value="farmers_market">Farmers Markets</option>
-                  <option value="home_baker">Home Bakers</option>
+                  <option value="bakery">Storefront Bakeries</option>
+                  <option value="farmers_market">Market Vendors</option>
+                  <option value="home_baker">Cottage Bakers</option>
                 </select>
               </div>
               <div>
