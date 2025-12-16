@@ -235,7 +235,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                 {bakery.phone && (
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-stone-400 flex-shrink-0" />
-                    <a href={`tel:${bakery.phone}`} className="text-yelp-500 hover:underline">
+                    <a href={`tel:${bakery.phone}`} className="text-bakery-500 hover:underline">
                       {bakery.phone}
                     </a>
                   </div>
@@ -248,7 +248,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                       href={bakery.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-yelp-500 hover:underline"
+                      className="text-bakery-500 hover:underline"
                     >
                       Visit Website
                     </a>
@@ -262,7 +262,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                       href={`https://instagram.com/${bakery.instagram.replace('@', '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-yelp-500 hover:underline"
+                      className="text-bakery-500 hover:underline"
                     >
                       {bakery.instagram}
                     </a>
@@ -291,7 +291,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                   <h3 className="font-semibold text-stone-800">Reviews</h3>
                   <button
                     onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="text-sm text-yelp-500 hover:text-yelp-600 font-medium"
+                    className="text-sm text-bakery-500 hover:text-bakery-600 font-medium"
                   >
                     Write a Review
                   </button>
@@ -311,7 +311,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                         type="text"
                         value={reviewForm.name}
                         onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500 text-sm"
+                        className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500 text-sm"
                         required
                       />
                     </div>
@@ -341,14 +341,14 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                       <textarea
                         value={reviewForm.comment}
                         onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                        className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500 resize-none text-sm"
+                        className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500 resize-none text-sm"
                         rows={3}
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={submitting || !reviewForm.name.trim()}
-                      className="flex items-center justify-center gap-2 w-full py-2 bg-yelp-500 hover:bg-yelp-600 disabled:bg-stone-400 text-white font-medium rounded-lg transition-colors text-sm"
+                      className="flex items-center justify-center gap-2 w-full py-2 bg-bakery-500 hover:bg-bakery-600 disabled:bg-stone-400 text-white font-medium rounded-lg transition-colors text-sm"
                     >
                       {submitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

@@ -21,7 +21,7 @@ export default function Footer() {
           {/* Logo & Tagline */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <Wheat className="w-8 h-8 text-yelp-500" />
+              <Wheat className="w-8 h-8 text-bakery-500" />
               <span className="text-xl font-bold">BreadFindr</span>
             </Link>
             <p className="text-stone-400 text-sm mb-4">
@@ -32,7 +32,7 @@ export default function Footer() {
                 href="https://instagram.com/bakinggreatbread"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-400 hover:text-yelp-500 transition-colors"
+                className="text-stone-400 hover:text-bakery-500 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -41,7 +41,7 @@ export default function Footer() {
                 href="https://facebook.com/bakinggreatbread"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-400 hover:text-yelp-500 transition-colors"
+                className="text-stone-400 hover:text-bakery-500 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -50,7 +50,7 @@ export default function Footer() {
                 href="https://youtube.com/@bakinggreatbread"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-stone-400 hover:text-yelp-500 transition-colors"
+                className="text-stone-400 hover:text-bakery-500 transition-colors"
                 aria-label="YouTube"
               >
                 <Youtube className="w-5 h-5" />
@@ -120,12 +120,12 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="flex-1 px-3 py-2 bg-stone-800 border border-stone-700 rounded-lg text-white placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="flex-1 px-3 py-2 bg-stone-800 border border-stone-700 rounded-lg text-white placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   required
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-yelp-500 hover:bg-yelp-600 text-white font-medium rounded-lg transition-colors text-sm"
+                  className="px-4 py-2 bg-bakery-500 hover:bg-bakery-600 text-white font-medium rounded-lg transition-colors text-sm"
                 >
                   Subscribe
                 </button>
@@ -143,7 +143,7 @@ export default function Footer() {
                 href="https://bakinggreatbread.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-yelp-500 hover:underline"
+                className="text-bakery-500 hover:underline"
               >
                 Baking Great Bread at Home
               </a>
