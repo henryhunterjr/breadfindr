@@ -1,0 +1,14 @@
+# BreadFindr Robots.txt
+# https://breadfindr.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://breadfindr.vercel.app/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Block API routes from indexing
+Disallow: /api/
