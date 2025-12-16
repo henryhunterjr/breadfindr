@@ -44,12 +44,9 @@ export default function About() {
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               <div className="aspect-[4/3] overflow-hidden bg-stone-100">
                 <img
-                  src="https://i.imgur.com/placeholder-tyler.jpg"
+                  src="https://i.imgur.com/EKmKeUB.png"
                   alt="Tyler Cartner - Wire Monkey"
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
                 />
               </div>
               <div className="p-6">
@@ -78,12 +75,9 @@ export default function About() {
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               <div className="aspect-[4/3] overflow-hidden bg-stone-100">
                 <img
-                  src="https://i.imgur.com/placeholder-henry.jpg"
+                  src="https://i.imgur.com/FDARiHD.jpeg"
                   alt="Henry Hunter - Baking Great Bread at Home"
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
                 />
               </div>
               <div className="p-6">
