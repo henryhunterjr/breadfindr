@@ -9,6 +9,7 @@ import { searchNearbyBakeries, isGooglePlacesConfigured } from './lib/googlePlac
 import BakeryCard from './components/BakeryCard';
 import BakeryModal from './components/BakeryModal';
 import MapView from './components/MapView';
+import BlogSuggestions from './components/BlogSuggestions';
 
 type SheetState = 'collapsed' | 'half' | 'expanded';
 
@@ -498,6 +499,15 @@ function App() {
                     />
                   </div>
                 ))}
+
+                {/* Blog/Recipe Suggestions */}
+                <div className="mt-4">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    specialties={filteredBakeries.flatMap(b => b.specialties).slice(0, 5)}
+                    variant="inline"
+                  />
+                </div>
               </div>
             )}
 
@@ -624,6 +634,15 @@ function App() {
                     />
                   </div>
                 ))}
+
+                {/* Blog/Recipe Suggestions - Mobile */}
+                <div className="mt-4">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    specialties={filteredBakeries.flatMap(b => b.specialties).slice(0, 5)}
+                    variant="inline"
+                  />
+                </div>
               </div>
             )}
           </div>
