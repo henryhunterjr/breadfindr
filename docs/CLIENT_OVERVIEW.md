@@ -90,6 +90,25 @@ Submissions are held for admin approval before appearing publicly.
 - **Mobile** - Full-screen map with draggable bottom sheet for listings
 - **Tablet** - Adaptive layout based on screen size
 
+### 9. Blog & Recipe Integration
+
+BreadFindr includes built-in cross-promotion with Baking Great Bread at Home content:
+
+| Feature | Description |
+|---------|-------------|
+| **Contextual Suggestions** | When users search for specific bread types (e.g., "sourdough"), relevant recipes and articles from bakinggreatbread.com appear |
+| **Rotating Featured Content** | When no search is active, the app rotates through different recipes and blog posts every 30 minutes |
+| **Specialty Matching** | Recipes match the specialties of displayed bakeries (viewing croissant bakeries shows croissant recipes) |
+| **Direct Links** | One-click access to full recipes at bakinggreatbread.com/recipes |
+
+**How it works:**
+- User searches "sourdough" → Shows sourdough starter guide, basic sourdough recipe
+- User searches "french bread" → Shows classic French baguette recipe
+- User browses bakeries with "Croissants" specialty → Shows homemade croissants recipe
+- No search active → Rotates through featured articles and recipes
+
+**Content is easily updatable** - New recipes and articles can be added to the system by editing a simple data file.
+
 ---
 
 ## Technical Architecture
@@ -260,6 +279,7 @@ As usage grows:
 - Interactive map with location services
 - Supabase database with schema
 - Deployment configuration for Vercel
+- Blog & recipe cross-promotion system (links to bakinggreatbread.com)
 
 ### What's Needed to Launch
 
