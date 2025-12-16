@@ -310,19 +310,19 @@ function App() {
 
   return (
     <div className="h-screen bg-stone-50 flex flex-col overflow-hidden">
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white flex-shrink-0">
+      <header className="bg-gradient-to-r from-bakery-500 to-bakery-600 text-white flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <Link to="/" className="flex items-center gap-2">
               <Wheat className="w-7 h-7" />
               <div>
                 <h1 className="text-xl font-bold">BreadFindr</h1>
-                <p className="text-yelp-100 text-xs hidden sm:block">Find local artisan bread near you</p>
+                <p className="text-bakery-100 text-xs hidden sm:block">Find local artisan bread near you</p>
               </div>
             </Link>
             <Link
               to="/submit"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white text-yelp-500 font-semibold rounded-lg hover:bg-yelp-50 transition-colors text-sm"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white text-bakery-500 font-semibold rounded-lg hover:bg-bakery-50 transition-colors text-sm"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Add Bakery</span>
@@ -337,7 +337,7 @@ function App() {
                 placeholder="Search bakeries, specialties..."
                 value={filters.query}
                 onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-                className="w-full pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300 text-sm"
+                className="w-full pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-300 text-sm"
               />
             </div>
             <div className="flex gap-2">
@@ -348,7 +348,7 @@ function App() {
                   placeholder="City or ZIP"
                   value={filters.location}
                   onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                  className="w-full md:w-36 pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300 text-sm"
+                  className="w-full md:w-36 pl-9 pr-4 py-2 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-300 text-sm"
                 />
                 {searchingLocation && (
                   <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-stone-400 animate-spin" />
@@ -357,7 +357,7 @@ function App() {
               <button
                 onClick={handleGetCurrentLocation}
                 disabled={gettingLocation}
-                className="flex items-center gap-1.5 px-3 py-2 bg-white text-yelp-600 hover:bg-yelp-50 disabled:bg-white/50 rounded-lg transition-colors font-medium text-sm"
+                className="flex items-center gap-1.5 px-3 py-2 bg-white text-bakery-600 hover:bg-bakery-50 disabled:bg-white/50 rounded-lg transition-colors font-medium text-sm"
                 title="Use my location"
               >
                 {gettingLocation ? (
@@ -369,7 +369,7 @@ function App() {
               </button>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center justify-center gap-1 px-2.5 py-2 bg-yelp-600 hover:bg-yelp-700 rounded-lg transition-colors"
+                className="flex items-center justify-center gap-1 px-2.5 py-2 bg-bakery-600 hover:bg-bakery-700 rounded-lg transition-colors"
               >
                 <Filter className="w-4 h-4" />
                 <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
@@ -378,15 +378,15 @@ function App() {
           </div>
 
           {locationError && (
-            <div className="mt-2 text-yelp-100 text-xs">
+            <div className="mt-2 text-bakery-100 text-xs">
               {locationError}
             </div>
           )}
 
           {showFilters && (
-            <div className="mt-2 p-3 bg-yelp-600/30 rounded-lg flex flex-wrap gap-3">
+            <div className="mt-2 p-3 bg-bakery-600/30 rounded-lg flex flex-wrap gap-3">
               <div>
-                <label className="block text-xs text-yelp-100 mb-1">Type</label>
+                <label className="block text-xs text-bakery-100 mb-1">Type</label>
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters({ ...filters, type: e.target.value as SearchFilters['type'] })}
@@ -399,7 +399,7 @@ function App() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-yelp-100 mb-1">Sort By</label>
+                <label className="block text-xs text-bakery-100 mb-1">Sort By</label>
                 <select
                   value={filters.sortBy}
                   onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as SearchFilters['sortBy'] })}
@@ -411,7 +411,7 @@ function App() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-yelp-100 mb-1">Radius</label>
+                <label className="block text-xs text-bakery-100 mb-1">Radius</label>
                 <select
                   value={filters.radius}
                   onChange={(e) => setFilters({ ...filters, radius: Number(e.target.value) })}
@@ -440,7 +440,7 @@ function App() {
                 <p className="text-stone-600 text-sm">
                   <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
                   {userLocation && (
-                    <span className="text-yelp-500"> near {userLocation.displayName || filters.location}</span>
+                    <span className="text-bakery-500"> near {userLocation.displayName || filters.location}</span>
                   )}
                 </p>
                 {discovering && (
@@ -456,7 +456,7 @@ function App() {
                 )}
               </div>
               {!isSupabaseConfigured() && (
-                <span className="text-xs text-yelp-500">Demo mode</span>
+                <span className="text-xs text-bakery-500">Demo mode</span>
               )}
             </div>
           </div>
@@ -465,12 +465,12 @@ function App() {
           <div className="flex-1 overflow-y-auto p-3">
             {loading ? (
               <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 text-yelp-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-bakery-500 animate-spin" />
                 <span className="ml-2 text-stone-600 text-sm">Loading...</span>
               </div>
             ) : error ? (
               <div className="text-center py-8">
-                <p className="text-yelp-500 text-sm">{error}</p>
+                <p className="text-bakery-500 text-sm">{error}</p>
               </div>
             ) : filteredBakeries.length === 0 ? (
               <div className="text-center py-12">
@@ -497,7 +497,7 @@ function App() {
                     onMouseEnter={() => setHoveredBakeryId(bakery.id)}
                     onMouseLeave={() => setHoveredBakeryId(null)}
                     className={`transition-all duration-200 rounded-xl ${
-                      hoveredBakeryId === bakery.id ? 'ring-2 ring-yelp-400' : ''
+                      hoveredBakeryId === bakery.id ? 'ring-2 ring-bakery-400' : ''
                     }`}
                   >
                     <BakeryCard
@@ -589,7 +589,7 @@ function App() {
                 <p className="text-stone-600 text-sm">
                   <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
                   {userLocation && (
-                    <span className="text-yelp-500 text-xs"> near you</span>
+                    <span className="text-bakery-500 text-xs"> near you</span>
                   )}
                 </p>
                 {discovering && (
@@ -615,7 +615,7 @@ function App() {
           <div className="flex-1 overflow-y-auto p-3" style={{ maxHeight: 'calc(100% - 80px)' }}>
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-5 h-5 text-yelp-500 animate-spin" />
+                <Loader2 className="w-5 h-5 text-bakery-500 animate-spin" />
                 <span className="ml-2 text-stone-600 text-sm">Loading...</span>
               </div>
             ) : filteredBakeries.length === 0 ? (
@@ -640,7 +640,7 @@ function App() {
                       if (el) cardRefs.current.set(bakery.id, el);
                     }}
                     className={`transition-all duration-200 rounded-xl ${
-                      hoveredBakeryId === bakery.id ? 'ring-2 ring-yelp-400' : ''
+                      hoveredBakeryId === bakery.id ? 'ring-2 ring-bakery-400' : ''
                     }`}
                   >
                     <BakeryCard

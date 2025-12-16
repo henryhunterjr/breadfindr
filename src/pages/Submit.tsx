@@ -144,7 +144,7 @@ export default function Submit() {
           </p>
           <button
             onClick={() => navigate('/')}
-            className="w-full py-3 bg-yelp-500 hover:bg-yelp-600 text-white font-semibold rounded-lg transition-colors"
+            className="w-full py-3 bg-bakery-500 hover:bg-bakery-600 text-white font-semibold rounded-lg transition-colors"
           >
             Return to BreadFindr
           </button>
@@ -156,11 +156,11 @@ export default function Submit() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white py-6">
+      <header className="bg-gradient-to-r from-bakery-500 to-bakery-600 text-white py-6">
         <div className="max-w-2xl mx-auto px-4">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-yelp-100 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-bakery-100 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to BreadFindr
@@ -169,7 +169,7 @@ export default function Submit() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">Add Your Bakery</h1>
-              <p className="text-yelp-100 text-sm">Join the BreadFindr community</p>
+              <p className="text-bakery-100 text-sm">Join the BreadFindr community</p>
             </div>
           </div>
         </div>
@@ -185,9 +185,9 @@ export default function Submit() {
               key={s}
               className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors ${
                 s === step
-                  ? 'bg-yelp-500 text-white'
+                  ? 'bg-bakery-500 text-white'
                   : s < step
-                  ? 'bg-yelp-200 text-yelp-600'
+                  ? 'bg-yelp-200 text-bakery-600'
                   : 'bg-stone-200 text-stone-500'
               }`}
             >
@@ -197,7 +197,7 @@ export default function Submit() {
         </div>
         <div className="h-2 bg-stone-200 rounded-full">
           <div
-            className="h-full bg-yelp-500 rounded-full transition-all duration-300"
+            className="h-full bg-bakery-500 rounded-full transition-all duration-300"
             style={{ width: `${((step - 1) / (totalSteps - 1)) * 100}%` }}
           />
         </div>
@@ -231,7 +231,7 @@ export default function Submit() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="e.g., Artisan Bread Co."
                 />
               </div>
@@ -251,7 +251,7 @@ export default function Submit() {
                       onClick={() => setFormData({ ...formData, type: option.value as FormData['type'] })}
                       className={`px-4 py-3 rounded-lg border-2 transition-colors ${
                         formData.type === option.value
-                          ? 'border-yelp-500 bg-yelp-50 text-yelp-600'
+                          ? 'border-bakery-500 bg-bakery-50 text-bakery-600'
                           : 'border-stone-200 hover:border-stone-300'
                       }`}
                     >
@@ -267,7 +267,7 @@ export default function Submit() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500 resize-none"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500 resize-none"
                   rows={3}
                   placeholder="Tell us about your bakery..."
                 />
@@ -290,7 +290,7 @@ export default function Submit() {
                     setFormData({ ...formData, address: e.target.value });
                     setLocationVerified(false);
                   }}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="123 Main St"
                 />
               </div>
@@ -306,7 +306,7 @@ export default function Submit() {
                       setFormData({ ...formData, city: e.target.value });
                       setLocationVerified(false);
                     }}
-                    className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                    className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                     placeholder="San Francisco"
                   />
                 </div>
@@ -320,7 +320,7 @@ export default function Submit() {
                       setFormData({ ...formData, state: e.target.value });
                       setLocationVerified(false);
                     }}
-                    className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                    className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   >
                     <option value="">Select state</option>
                     {US_STATES.map((state) => (
@@ -342,7 +342,7 @@ export default function Submit() {
                     setFormData({ ...formData, zip: e.target.value });
                     setLocationVerified(false);
                   }}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="94110"
                 />
               </div>
@@ -382,7 +382,7 @@ export default function Submit() {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="(415) 555-0123"
                 />
               </div>
@@ -394,7 +394,7 @@ export default function Submit() {
                   type="url"
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="https://yourbakery.com"
                 />
               </div>
@@ -406,7 +406,7 @@ export default function Submit() {
                   type="text"
                   value={formData.instagram}
                   onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="@yourbakery"
                 />
               </div>
@@ -425,7 +425,7 @@ export default function Submit() {
                   type="text"
                   value={formData.hours}
                   onChange={(e) => setFormData({ ...formData, hours: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="e.g., Mon-Sat 7am-3pm"
                 />
               </div>
@@ -441,7 +441,7 @@ export default function Submit() {
                       onClick={() => handleSpecialtyToggle(specialty)}
                       className={`px-3 py-1 rounded-full text-sm transition-colors ${
                         formData.specialties.includes(specialty)
-                          ? 'bg-yelp-500 text-white'
+                          ? 'bg-bakery-500 text-white'
                           : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                       }`}
                     >
@@ -458,7 +458,7 @@ export default function Submit() {
                   type="url"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                   placeholder="https://example.com/photo.jpg"
                 />
                 <p className="text-xs text-stone-500 mt-1">
@@ -523,7 +523,7 @@ export default function Submit() {
                     <span className="text-sm text-stone-500">Specialties:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {formData.specialties.map((s) => (
-                        <span key={s} className="bg-yelp-100 text-yelp-600 px-2 py-0.5 rounded text-sm">
+                        <span key={s} className="bg-bakery-100 text-bakery-600 px-2 py-0.5 rounded text-sm">
                           {s}
                         </span>
                       ))}
@@ -550,7 +550,7 @@ export default function Submit() {
                 type="button"
                 onClick={() => setStep(step + 1)}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 px-6 py-2 bg-yelp-500 hover:bg-yelp-600 disabled:bg-stone-400 text-white font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-bakery-500 hover:bg-bakery-600 disabled:bg-stone-400 text-white font-medium rounded-lg transition-colors"
               >
                 Next
                 <ArrowRight className="w-4 h-4" />

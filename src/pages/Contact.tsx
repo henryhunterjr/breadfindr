@@ -36,11 +36,11 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white py-6">
+      <header className="bg-gradient-to-r from-bakery-500 to-bakery-600 text-white py-6">
         <div className="max-w-4xl mx-auto px-4">
           <Link
             to="/"
-            className="flex items-center gap-2 text-yelp-100 hover:text-white mb-4 transition-colors"
+            className="flex items-center gap-2 text-bakery-100 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to BreadFindr
@@ -49,7 +49,7 @@ export default function Contact() {
             <Wheat className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold">Contact Us</h1>
-              <p className="text-yelp-100 text-sm">We'd love to hear from you</p>
+              <p className="text-bakery-100 text-sm">We'd love to hear from you</p>
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function Contact() {
               </p>
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-yelp-500 hover:bg-yelp-600 text-white font-medium rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-bakery-500 hover:bg-bakery-600 text-white font-medium rounded-lg transition-colors"
               >
                 Return to BreadFindr
               </Link>
@@ -96,7 +96,7 @@ export default function Contact() {
                         type="text"
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                         placeholder="John Doe"
                         required
                       />
@@ -109,7 +109,7 @@ export default function Contact() {
                         type="email"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500"
                         placeholder="john@example.com"
                         required
                       />
@@ -129,7 +129,7 @@ export default function Contact() {
                           onClick={() => setForm({ ...form, reason: reason.value as ContactReason })}
                           className={`flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors text-left ${
                             form.reason === reason.value
-                              ? 'border-yelp-500 bg-yelp-50 text-yelp-600'
+                              ? 'border-bakery-500 bg-bakery-50 text-bakery-600'
                               : 'border-stone-200 hover:border-stone-300'
                           }`}
                         >
@@ -148,7 +148,7 @@ export default function Contact() {
                     <textarea
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yelp-500 resize-none"
+                      className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bakery-500 resize-none"
                       rows={5}
                       placeholder="Tell us what's on your mind..."
                       required
@@ -159,7 +159,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={submitting || !form.name || !form.email || !form.message}
-                    className="flex items-center justify-center gap-2 w-full py-3 bg-yelp-500 hover:bg-yelp-600 disabled:bg-stone-400 text-white font-semibold rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-bakery-500 hover:bg-bakery-600 disabled:bg-stone-400 text-white font-semibold rounded-lg transition-colors"
                   >
                     {submitting ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -176,7 +176,7 @@ export default function Contact() {
                 <p className="text-stone-600 mb-2">You can also reach us directly at:</p>
                 <a
                   href="mailto:hello@breadfindr.com"
-                  className="text-yelp-500 hover:underline font-medium"
+                  className="text-bakery-500 hover:underline font-medium"
                 >
                   hello@breadfindr.com
                 </a>

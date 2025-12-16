@@ -160,29 +160,29 @@ export default function Home() {
   const displayedStates = showAllStates ? STATES : STATES.slice(0, 12);
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-yelp-500 to-yelp-600 text-white">
+    <div className="min-h-screen bg-cream-100 flex flex-col">
+      {/* Header - Transparent over hero */}
+      <header className="absolute top-0 left-0 right-0 z-10 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 text-white drop-shadow-lg">
               <Wheat className="w-8 h-8" />
               <div>
                 <h1 className="text-xl font-bold">BreadFindr</h1>
-                <p className="text-yelp-100 text-xs hidden sm:block">Find local artisan bread near you</p>
+                <p className="text-white/80 text-xs hidden sm:block">Find local artisan bread near you</p>
               </div>
             </Link>
             <div className="flex items-center gap-3">
               <Link
                 to="/search"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-yelp-100 hover:text-white transition-colors text-sm"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-white/90 hover:text-white transition-colors text-sm drop-shadow"
               >
                 <Search className="w-4 h-4" />
                 Browse Directory
               </Link>
               <Link
                 to="/submit"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-yelp-500 font-semibold rounded-lg hover:bg-yelp-50 transition-colors text-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-bakery-600 font-semibold rounded-lg hover:bg-cream-100 transition-colors text-sm shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Add Bakery</span>
@@ -193,20 +193,30 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-yelp-500 via-yelp-600 to-yelp-700 text-white py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+      {/* Hero Section with Background Image */}
+      <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://i.imgur.com/kUTWEGo.jpeg')" }}
+        >
+          {/* Overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-900/60 via-stone-900/40 to-stone-900/70" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center pt-20">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
             Find Real Bread Near You
           </h2>
-          <p className="text-xl text-yelp-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto drop-shadow">
             Discover local artisan bakeries, farmers market vendors, and home bakers
             crafting authentic sourdough and naturally-leavened breads.
           </p>
 
           {/* Search Form */}
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-xl shadow-lg">
+            <div className="flex flex-col sm:flex-row gap-2 bg-white/95 backdrop-blur-sm p-2 rounded-2xl shadow-2xl">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
                 <input
@@ -214,7 +224,7 @@ export default function Home() {
                   placeholder="Sourdough, bakery name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-300 bg-transparent"
                 />
               </div>
               <div className="flex-1 relative">
@@ -224,23 +234,23 @@ export default function Home() {
                   placeholder="City, state, or ZIP"
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-300 bg-transparent"
                 />
               </div>
               <button
                 type="submit"
-                className="px-8 py-3 bg-yelp-500 hover:bg-yelp-600 text-white font-semibold rounded-lg transition-colors whitespace-nowrap"
+                className="px-8 py-3 bg-bakery-500 hover:bg-bakery-600 text-white font-semibold rounded-xl transition-colors whitespace-nowrap shadow-lg"
               >
                 Search
               </button>
             </div>
           </form>
 
-          <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={handleNearMe}
               disabled={gettingLocation}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 text-white font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white/20 hover:bg-white/30 disabled:bg-white/10 text-white font-medium rounded-xl transition-colors backdrop-blur-sm border border-white/30"
             >
               {gettingLocation ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -249,8 +259,8 @@ export default function Home() {
               )}
               {gettingLocation ? 'Finding you...' : 'Use My Location'}
             </button>
-            <span className="text-yelp-200 text-sm">
-              or <Link to="/search" className="underline hover:text-white">browse all bakeries</Link>
+            <span className="text-white/80 text-sm">
+              or <Link to="/search" className="underline hover:text-white font-medium">browse all bakeries</Link>
             </span>
           </div>
         </div>
@@ -261,15 +271,15 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-yelp-500">500+</div>
+              <div className="text-3xl md:text-4xl font-bold text-bakery-500">500+</div>
               <div className="text-stone-600 text-sm md:text-base">Artisan Bakers</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-yelp-500">10k+</div>
+              <div className="text-3xl md:text-4xl font-bold text-bakery-500">10k+</div>
               <div className="text-stone-600 text-sm md:text-base">Loaves Discovered</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-yelp-500">48</div>
+              <div className="text-3xl md:text-4xl font-bold text-bakery-500">48</div>
               <div className="text-stone-600 text-sm md:text-base">States Covered</div>
             </div>
           </div>
@@ -284,8 +294,8 @@ export default function Home() {
           </h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-yelp-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-yelp-500" />
+              <div className="w-16 h-16 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-bakery-500" />
               </div>
               <div className="text-lg font-semibold text-stone-800 mb-2">1. Search</div>
               <p className="text-stone-600">
@@ -293,8 +303,8 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-yelp-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-yelp-500" />
+              <div className="w-16 h-16 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-bakery-500" />
               </div>
               <div className="text-lg font-semibold text-stone-800 mb-2">2. Discover</div>
               <p className="text-stone-600">
@@ -302,8 +312,8 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-yelp-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-yelp-500" />
+              <div className="w-16 h-16 bg-bakery-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-8 h-8 text-bakery-500" />
               </div>
               <div className="text-lg font-semibold text-stone-800 mb-2">3. Enjoy</div>
               <p className="text-stone-600">
@@ -323,7 +333,7 @@ export default function Home() {
             </h3>
             <Link
               to="/search"
-              className="flex items-center gap-1 text-yelp-500 hover:text-yelp-600 font-medium"
+              className="flex items-center gap-1 text-bakery-500 hover:text-bakery-600 font-medium"
             >
               View all <ChevronRight className="w-4 h-4" />
             </Link>
@@ -371,7 +381,7 @@ export default function Home() {
             </h3>
             <Link
               to="/submit"
-              className="flex items-center gap-1 text-yelp-500 hover:text-yelp-600 font-medium text-sm"
+              className="flex items-center gap-1 text-bakery-500 hover:text-bakery-600 font-medium text-sm"
             >
               <Plus className="w-4 h-4" /> Add yours
             </Link>
@@ -485,7 +495,7 @@ export default function Home() {
               <button
                 key={state}
                 onClick={() => handleStateClick(state)}
-                className="px-3 py-2 bg-white rounded-lg text-stone-700 hover:bg-yelp-50 hover:text-yelp-600 transition-colors text-sm border border-stone-200"
+                className="px-3 py-2 bg-white rounded-lg text-stone-700 hover:bg-bakery-50 hover:text-bakery-600 transition-colors text-sm border border-stone-200"
               >
                 {state}
               </button>
@@ -495,7 +505,7 @@ export default function Home() {
             <div className="text-center mt-6">
               <button
                 onClick={() => setShowAllStates(true)}
-                className="inline-flex items-center gap-1 text-yelp-500 hover:text-yelp-600 font-medium"
+                className="inline-flex items-center gap-1 text-bakery-500 hover:text-bakery-600 font-medium"
               >
                 Show all states <ChevronDown className="w-4 h-4" />
               </button>
@@ -574,12 +584,12 @@ export default function Home() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="flex-1 px-4 py-2 bg-stone-700 border border-stone-600 rounded-lg text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yelp-500"
+                    className="flex-1 px-4 py-2 bg-stone-700 border border-stone-600 rounded-lg text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-500"
                     required
                   />
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-yelp-500 hover:bg-yelp-600 text-white font-medium rounded-lg transition-colors"
+                    className="px-6 py-2 bg-bakery-500 hover:bg-bakery-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Subscribe
                   </button>
@@ -605,7 +615,7 @@ export default function Home() {
               href="https://bakinggreatbread.blog"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-yelp-500 hover:bg-yelp-600 text-white font-semibold rounded-lg transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-bakery-500 hover:bg-bakery-600 text-white font-semibold rounded-lg transition-colors"
             >
               <BookOpen className="w-5 h-5" />
               Visit the Blog
@@ -644,7 +654,7 @@ export default function Home() {
                   className="w-full flex items-center justify-between p-4 text-left hover:bg-stone-50 transition-colors"
                 >
                   <span className="font-medium text-stone-800 flex items-center gap-2">
-                    <HelpCircle className="w-5 h-5 text-yelp-500 flex-shrink-0" />
+                    <HelpCircle className="w-5 h-5 text-bakery-500 flex-shrink-0" />
                     {item.question}
                   </span>
                   <ChevronDown
