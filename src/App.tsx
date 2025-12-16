@@ -357,7 +357,7 @@ function App() {
               <button
                 onClick={handleGetCurrentLocation}
                 disabled={gettingLocation}
-                className="px-2.5 py-2 bg-yelp-600 hover:bg-yelp-700 disabled:bg-yelp-600/50 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 bg-white text-yelp-600 hover:bg-yelp-50 disabled:bg-white/50 rounded-lg transition-colors font-medium text-sm"
                 title="Use my location"
               >
                 {gettingLocation ? (
@@ -365,6 +365,7 @@ function App() {
                 ) : (
                   <Navigation className="w-4 h-4" />
                 )}
+                <span className="hidden sm:inline">Near Me</span>
               </button>
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -475,7 +476,15 @@ function App() {
               <div className="text-center py-12">
                 <Wheat className="w-12 h-12 text-stone-300 mx-auto mb-3" />
                 <h3 className="text-lg font-semibold text-stone-600 mb-1">No bakeries found</h3>
-                <p className="text-stone-500 text-sm">Try adjusting your search or filters</p>
+                <p className="text-stone-500 text-sm mb-6">Try adjusting your search or filters</p>
+
+                {/* Show blog suggestions even when no bakeries */}
+                <div className="text-left">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    variant="inline"
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-2">
@@ -612,7 +621,15 @@ function App() {
             ) : filteredBakeries.length === 0 ? (
               <div className="text-center py-8">
                 <Wheat className="w-10 h-10 text-stone-300 mx-auto mb-2" />
-                <p className="text-stone-500 text-sm">No bakeries found</p>
+                <p className="text-stone-500 text-sm mb-4">No bakeries found</p>
+
+                {/* Show blog suggestions even when no bakeries - Mobile */}
+                <div className="text-left">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    variant="inline"
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-2">

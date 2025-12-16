@@ -1,15 +1,18 @@
 /**
  * Google Places API Integration
- * Searches for bakeries near a location and returns normalized results
+ * Searches for bakeries near a location using server-side API proxy
  */
 
 import type { Bakery } from '../types';
 
+// For photo URLs, we still need the client-side key
 const GOOGLE_PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || '';
 
-// Check if Google Places is configured
+// Check if Google Places is configured (server-side handles the actual key)
 export const isGooglePlacesConfigured = (): boolean => {
-  return !!GOOGLE_PLACES_API_KEY && !GOOGLE_PLACES_API_KEY.includes('your-api-key');
+  // In production, the server has the key. We return true to attempt discovery.
+  // The server will return an error if not configured.
+  return true;
 };
 
 // Types for Google Places API responses
@@ -39,45 +42,10 @@ interface PlaceResult {
   vicinity?: string;
 }
 
-interface PlaceDetails {
-  place_id: string;
-  name: string;
-  formatted_address?: string;
-  formatted_phone_number?: string;
-  website?: string;
-  url?: string; // Google Maps URL
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
-  rating?: number;
-  user_ratings_total?: number;
-  types?: string[];
-  opening_hours?: {
-    weekday_text?: string[];
-  };
-  photos?: Array<{
-    photo_reference: string;
-  }>;
-  address_components?: Array<{
-    long_name: string;
-    short_name: string;
-    types: string[];
-  }>;
-}
-
 interface NearbySearchResponse {
   results: PlaceResult[];
   status: string;
   next_page_token?: string;
-  error_message?: string;
-}
-
-interface PlaceDetailsResponse {
-  result: PlaceDetails;
-  status: string;
   error_message?: string;
 }
 
@@ -86,31 +54,31 @@ const searchCache = new Map<string, { results: Bakery[]; timestamp: number }>();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
 /**
- * Search for bakeries near a location using Google Places API
+ * Search for bakeries near a location using Google Places API (via server proxy)
  */
 export async function searchNearbyBakeries(
   lat: number,
   lng: number,
   radiusMeters: number = 40000 // Default 25 miles ≈ 40km
 ): Promise<Bakery[]> {
-  if (!isGooglePlacesConfigured()) {
-    console.warn('Google Places API not configured');
-    return [];
-  }
-
   // Check cache first
   const cacheKey = `${lat.toFixed(3)},${lng.toFixed(3)},${radiusMeters}`;
   const cached = searchCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    console.log('Using cached bakery results');
     return cached.results;
   }
 
   try {
-    // Search for bakeries
+    console.log('Searching for bakeries near:', lat, lng);
+
+    // Search for bakeries via API proxy
     const bakeryResults = await nearbySearch(lat, lng, radiusMeters, 'bakery');
+    console.log('Found bakery results:', bakeryResults.length);
 
     // Also search for "artisan bread" to catch more specialty shops
     const artisanResults = await textSearch(lat, lng, radiusMeters, 'artisan bakery sourdough');
+    console.log('Found artisan results:', artisanResults.length);
 
     // Combine and deduplicate results
     const allResults = [...bakeryResults, ...artisanResults];
@@ -126,6 +94,8 @@ export async function searchNearbyBakeries(
       return !isChain && !isGrocery;
     });
 
+    console.log('After filtering chains:', filteredResults.length);
+
     // Convert to Bakery format
     const bakeries = filteredResults.map(place => placeResultToBakery(place));
 
@@ -140,43 +110,10 @@ export async function searchNearbyBakeries(
 }
 
 /**
- * Get detailed information about a specific place
- */
-export async function getPlaceDetails(placeId: string): Promise<Bakery | null> {
-  if (!isGooglePlacesConfigured()) {
-    return null;
-  }
-
-  try {
-    const fields = [
-      'place_id', 'name', 'formatted_address', 'formatted_phone_number',
-      'website', 'geometry', 'rating', 'user_ratings_total', 'types',
-      'opening_hours', 'photos', 'address_components'
-    ].join(',');
-
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?` +
-      `place_id=${placeId}&fields=${fields}&key=${GOOGLE_PLACES_API_KEY}`;
-
-    const response = await fetch(url);
-    const data: PlaceDetailsResponse = await response.json();
-
-    if (data.status !== 'OK' || !data.result) {
-      console.error('Place details error:', data.status, data.error_message);
-      return null;
-    }
-
-    return placeDetailsToBakery(data.result);
-  } catch (error) {
-    console.error('Error fetching place details:', error);
-    return null;
-  }
-}
-
-/**
  * Get a photo URL for a place
  */
 export function getPhotoUrl(photoReference: string, maxWidth: number = 400): string {
-  if (!isGooglePlacesConfigured() || !photoReference) {
+  if (!GOOGLE_PLACES_API_KEY || !photoReference) {
     return '';
   }
   return `https://maps.googleapis.com/maps/api/place/photo?` +
@@ -191,8 +128,8 @@ async function nearbySearch(
   radius: number,
   type: string
 ): Promise<PlaceResult[]> {
-  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?` +
-    `location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_PLACES_API_KEY}`;
+  // Use API proxy to avoid CORS issues
+  const url = `/api/places/nearby?lat=${lat}&lng=${lng}&radius=${radius}&type=${type}`;
 
   const response = await fetch(url);
   const data: NearbySearchResponse = await response.json();
@@ -211,8 +148,8 @@ async function textSearch(
   radius: number,
   query: string
 ): Promise<PlaceResult[]> {
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?` +
-    `query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=${radius}&key=${GOOGLE_PLACES_API_KEY}`;
+  // Use API proxy to avoid CORS issues
+  const url = `/api/places/search?lat=${lat}&lng=${lng}&radius=${radius}&query=${encodeURIComponent(query)}`;
 
   const response = await fetch(url);
   const data: NearbySearchResponse = await response.json();
@@ -262,34 +199,6 @@ function placeResultToBakery(place: PlaceResult): Bakery {
   };
 }
 
-function placeDetailsToBakery(place: PlaceDetails): Bakery {
-  const addressParts = parseAddressComponents(place.address_components || []);
-
-  return {
-    id: `google_${place.place_id}`,
-    name: place.name,
-    type: 'bakery',
-    description: '',
-    specialties: inferSpecialties(place.name, place.types || []),
-    rating: place.rating || 0,
-    reviewCount: place.user_ratings_total || 0,
-    address: addressParts.street,
-    city: addressParts.city,
-    state: addressParts.state,
-    zip: addressParts.zip,
-    phone: place.formatted_phone_number,
-    website: place.website,
-    hours: place.opening_hours?.weekday_text?.join('\n'),
-    latitude: place.geometry.location.lat,
-    longitude: place.geometry.location.lng,
-    verified: false,
-    featured: false,
-    image: place.photos?.[0] ? getPhotoUrl(place.photos[0].photo_reference) : undefined,
-    googlePlaceId: place.place_id,
-    source: 'google_places' as const,
-  };
-}
-
 function parseAddress(address: string): { street: string; city: string; state: string; zip: string } {
   // Try to parse "123 Main St, City, ST 12345, USA" format
   const parts = address.split(',').map(p => p.trim());
@@ -306,44 +215,6 @@ function parseAddress(address: string): { street: string; city: string; state: s
   }
 
   return { street: address, city: '', state: '', zip: '' };
-}
-
-function parseAddressComponents(components: PlaceDetails['address_components']): {
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-} {
-  if (!components) {
-    return { street: '', city: '', state: '', zip: '' };
-  }
-
-  let streetNumber = '';
-  let route = '';
-  let city = '';
-  let state = '';
-  let zip = '';
-
-  for (const component of components) {
-    if (component.types.includes('street_number')) {
-      streetNumber = component.long_name;
-    } else if (component.types.includes('route')) {
-      route = component.long_name;
-    } else if (component.types.includes('locality')) {
-      city = component.long_name;
-    } else if (component.types.includes('administrative_area_level_1')) {
-      state = component.short_name;
-    } else if (component.types.includes('postal_code')) {
-      zip = component.long_name;
-    }
-  }
-
-  return {
-    street: [streetNumber, route].filter(Boolean).join(' '),
-    city,
-    state,
-    zip,
-  };
 }
 
 function inferSpecialties(name: string, _types: string[]): string[] {
