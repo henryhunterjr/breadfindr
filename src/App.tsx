@@ -5,7 +5,7 @@ import type { Bakery, SearchFilters, UserLocation } from './types';
 import { MOCK_BAKERIES } from './constants';
 import { fetchBakeries, isSupabaseConfigured } from './lib/supabase';
 import { geocodeLocation, calculateDistance, getCurrentPosition, reverseGeocode } from './lib/geocoding';
-import { searchNearbyBakeries, isGooglePlacesConfigured } from './lib/googlePlaces';
+import { searchNearbyBakeries, isGooglePlacesConfigured, enrichBakeries } from './lib/googlePlaces';
 import BakeryCard from './components/BakeryCard';
 import BakeryModal from './components/BakeryModal';
 import MapView from './components/MapView';
@@ -89,6 +89,51 @@ function App() {
 
     loadBakeries();
   }, []);
+
+  // Enrich database bakeries with Google Places photos
+  useEffect(() => {
+    async function enrichDatabaseBakeries() {
+      // Only enrich bakeries that:
+      // 1. Are from our database (not Google discovered)
+      // 2. Don't have a valid image URL
+      const bakeriesNeedingEnrichment = bakeries.filter(b =>
+        b.source !== 'google_places' &&
+        (!b.image || b.image.includes('unsplash') || b.image.includes('placeholder'))
+      );
+
+      if (bakeriesNeedingEnrichment.length === 0) return;
+
+      console.log(`Enriching ${bakeriesNeedingEnrichment.length} bakeries with Google data...`);
+
+      const enrichmentData = await enrichBakeries(
+        bakeriesNeedingEnrichment.map(b => ({
+          id: b.id,
+          name: b.name,
+          latitude: b.latitude,
+          longitude: b.longitude,
+          city: b.city,
+          state: b.state
+        }))
+      );
+
+      // Update bakeries with enriched data
+      setBakeries(prev => prev.map(bakery => {
+        const enrichment = enrichmentData.get(bakery.id);
+        if (enrichment?.found && enrichment.photoUrl) {
+          return {
+            ...bakery,
+            image: enrichment.photoUrl,
+            googlePlaceId: enrichment.place_id
+          };
+        }
+        return bakery;
+      }));
+    }
+
+    if (bakeries.length > 0 && !loading) {
+      enrichDatabaseBakeries();
+    }
+  }, [bakeries.length, loading]);
 
   // Handle location search
   const handleLocationSearch = useCallback(async () => {
