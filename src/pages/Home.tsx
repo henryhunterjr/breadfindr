@@ -17,8 +17,11 @@ import {
   Mail,
   ExternalLink,
   BookOpen,
-  HelpCircle
+  HelpCircle,
+  Navigation,
+  Loader2
 } from 'lucide-react';
+import { getCurrentPosition, reverseGeocode } from '../lib/geocoding';
 import Footer from '../components/Footer';
 
 // Featured bakers data
@@ -117,6 +120,7 @@ export default function Home() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [gettingLocation, setGettingLocation] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +128,21 @@ export default function Home() {
     if (searchQuery) params.set('q', searchQuery);
     if (searchLocation) params.set('location', searchLocation);
     navigate(`/search${params.toString() ? '?' + params.toString() : ''}`);
+  };
+
+  const handleNearMe = async () => {
+    setGettingLocation(true);
+    try {
+      const position = await getCurrentPosition();
+      const locationName = await reverseGeocode(position.lat, position.lng);
+      // Navigate directly to search with the location
+      navigate(`/search?location=${encodeURIComponent(locationName || 'Near me')}&lat=${position.lat}&lng=${position.lng}`);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      alert('Unable to get your location. Please enter a location manually.');
+    } finally {
+      setGettingLocation(false);
+    }
   };
 
   const handleStateClick = (state: string) => {
@@ -217,9 +236,23 @@ export default function Home() {
             </div>
           </form>
 
-          <p className="mt-4 text-yelp-200 text-sm">
-            or <Link to="/search" className="underline hover:text-white">browse all bakeries</Link>
-          </p>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={handleNearMe}
+              disabled={gettingLocation}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 text-white font-medium rounded-lg transition-colors"
+            >
+              {gettingLocation ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Navigation className="w-4 h-4" />
+              )}
+              {gettingLocation ? 'Finding you...' : 'Use My Location'}
+            </button>
+            <span className="text-yelp-200 text-sm">
+              or <Link to="/search" className="underline hover:text-white">browse all bakeries</Link>
+            </span>
+          </div>
         </div>
       </section>
 
@@ -579,7 +612,7 @@ export default function Home() {
               <ExternalLink className="w-4 h-4" />
             </a>
             <a
-              href="https://bakinggreatbread.blog/recipes"
+              href="https://bakinggreatbread.com/recipes"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold rounded-lg transition-colors"

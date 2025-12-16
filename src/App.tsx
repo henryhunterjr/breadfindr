@@ -5,9 +5,11 @@ import type { Bakery, SearchFilters, UserLocation } from './types';
 import { MOCK_BAKERIES } from './constants';
 import { fetchBakeries, isSupabaseConfigured } from './lib/supabase';
 import { geocodeLocation, calculateDistance, getCurrentPosition, reverseGeocode } from './lib/geocoding';
+import { searchNearbyBakeries, isGooglePlacesConfigured } from './lib/googlePlaces';
 import BakeryCard from './components/BakeryCard';
 import BakeryModal from './components/BakeryModal';
 import MapView from './components/MapView';
+import BlogSuggestions from './components/BlogSuggestions';
 
 type SheetState = 'collapsed' | 'half' | 'expanded';
 
@@ -26,7 +28,9 @@ function App() {
 
   // Data loading state
   const [bakeries, setBakeries] = useState<Bakery[]>([]);
+  const [discoveredBakeries, setDiscoveredBakeries] = useState<Bakery[]>([]);
   const [loading, setLoading] = useState(true);
+  const [discovering, setDiscovering] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Location state
@@ -122,6 +126,41 @@ function App() {
     return () => clearTimeout(timeout);
   }, [filters.location, handleLocationSearch]);
 
+  // Auto-discover bakeries from Google Places when user location changes
+  useEffect(() => {
+    if (!userLocation || !isGooglePlacesConfigured()) {
+      return;
+    }
+
+    const discoverBakeries = async () => {
+      setDiscovering(true);
+      try {
+        // Convert radius from miles to meters
+        const radiusMeters = filters.radius * 1609;
+        const discovered = await searchNearbyBakeries(
+          userLocation.lat,
+          userLocation.lng,
+          radiusMeters
+        );
+
+        // Filter out any that match existing bakeries by name/location
+        const existingNames = new Set(
+          bakeries.map(b => `${b.name.toLowerCase()}-${b.city.toLowerCase()}`)
+        );
+        const newDiscoveries = discovered.filter(
+          d => !existingNames.has(`${d.name.toLowerCase()}-${d.city.toLowerCase()}`)
+        );
+
+        setDiscoveredBakeries(newDiscoveries);
+      } catch (err) {
+        console.error('Error discovering bakeries:', err);
+      }
+      setDiscovering(false);
+    };
+
+    discoverBakeries();
+  }, [userLocation, filters.radius, bakeries]);
+
   // Get user's current location
   const handleGetCurrentLocation = async () => {
     setGettingLocation(true);
@@ -162,9 +201,16 @@ function App() {
     }
   };
 
-  // Filter and sort bakeries
+  // Filter and sort bakeries (including discovered ones)
   const filteredBakeries = useMemo(() => {
-    let results = [...bakeries];
+    // Combine database bakeries with discovered ones
+    // Database bakeries are marked with source: 'manual', discovered with 'google_places'
+    const allBakeries = [
+      ...bakeries.map(b => ({ ...b, source: b.source || 'manual' as const })),
+      ...discoveredBakeries
+    ];
+
+    let results = [...allBakeries];
 
     if (filters.query) {
       const query = filters.query.toLowerCase();
@@ -200,8 +246,14 @@ function App() {
       );
     }
 
+    // Sort: verified/featured first, then by selected criteria
     if (filters.sortBy === 'rating') {
-      results.sort((a, b) => b.rating - a.rating);
+      results.sort((a, b) => {
+        // Verified bakeries first
+        if (a.verified && !b.verified) return -1;
+        if (!a.verified && b.verified) return 1;
+        return b.rating - a.rating;
+      });
     } else if (filters.sortBy === 'name') {
       results.sort((a, b) => a.name.localeCompare(b.name));
     } else if (filters.sortBy === 'distance' && userLocation) {
@@ -214,7 +266,7 @@ function App() {
     }
 
     return results;
-  }, [bakeries, filters, userLocation]);
+  }, [bakeries, discoveredBakeries, filters, userLocation]);
 
   // Create index map for numbered markers
   const bakeryIndexMap = useMemo(() => {
@@ -305,7 +357,7 @@ function App() {
               <button
                 onClick={handleGetCurrentLocation}
                 disabled={gettingLocation}
-                className="px-2.5 py-2 bg-yelp-600 hover:bg-yelp-700 disabled:bg-yelp-600/50 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 bg-white text-yelp-600 hover:bg-yelp-50 disabled:bg-white/50 rounded-lg transition-colors font-medium text-sm"
                 title="Use my location"
               >
                 {gettingLocation ? (
@@ -313,6 +365,7 @@ function App() {
                 ) : (
                   <Navigation className="w-4 h-4" />
                 )}
+                <span className="hidden sm:inline">Near Me</span>
               </button>
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -383,12 +436,25 @@ function App() {
           {/* List Header */}
           <div className="flex-shrink-0 px-4 py-3 bg-white border-b border-stone-200">
             <div className="flex items-center justify-between">
-              <p className="text-stone-600 text-sm">
-                <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
-                {userLocation && (
-                  <span className="text-yelp-500"> near {userLocation.displayName || filters.location}</span>
+              <div>
+                <p className="text-stone-600 text-sm">
+                  <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
+                  {userLocation && (
+                    <span className="text-yelp-500"> near {userLocation.displayName || filters.location}</span>
+                  )}
+                </p>
+                {discovering && (
+                  <p className="text-xs text-stone-500 flex items-center gap-1 mt-0.5">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Discovering more bakeries nearby...
+                  </p>
                 )}
-              </p>
+                {discoveredBakeries.length > 0 && !discovering && (
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    Including {discoveredBakeries.length} discovered from Google
+                  </p>
+                )}
+              </div>
               {!isSupabaseConfigured() && (
                 <span className="text-xs text-yelp-500">Demo mode</span>
               )}
@@ -410,7 +476,15 @@ function App() {
               <div className="text-center py-12">
                 <Wheat className="w-12 h-12 text-stone-300 mx-auto mb-3" />
                 <h3 className="text-lg font-semibold text-stone-600 mb-1">No bakeries found</h3>
-                <p className="text-stone-500 text-sm">Try adjusting your search or filters</p>
+                <p className="text-stone-500 text-sm mb-6">Try adjusting your search or filters</p>
+
+                {/* Show blog suggestions even when no bakeries */}
+                <div className="text-left">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    variant="inline"
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-2">
@@ -434,6 +508,15 @@ function App() {
                     />
                   </div>
                 ))}
+
+                {/* Blog/Recipe Suggestions */}
+                <div className="mt-4">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    specialties={filteredBakeries.flatMap(b => b.specialties).slice(0, 5)}
+                    variant="inline"
+                  />
+                </div>
               </div>
             )}
 
@@ -502,12 +585,20 @@ function App() {
           {/* Sheet Header */}
           <div className="px-4 pb-2 border-b border-stone-200">
             <div className="flex items-center justify-between">
-              <p className="text-stone-600 text-sm">
-                <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
-                {userLocation && (
-                  <span className="text-yelp-500 text-xs"> near you</span>
+              <div>
+                <p className="text-stone-600 text-sm">
+                  <span className="font-semibold text-stone-800">{filteredBakeries.length}</span> bakeries
+                  {userLocation && (
+                    <span className="text-yelp-500 text-xs"> near you</span>
+                  )}
+                </p>
+                {discovering && (
+                  <p className="text-xs text-stone-400 flex items-center gap-1">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Discovering...
+                  </p>
                 )}
-              </p>
+              </div>
               <select
                 value={filters.sortBy}
                 onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as SearchFilters['sortBy'] })}
@@ -530,7 +621,15 @@ function App() {
             ) : filteredBakeries.length === 0 ? (
               <div className="text-center py-8">
                 <Wheat className="w-10 h-10 text-stone-300 mx-auto mb-2" />
-                <p className="text-stone-500 text-sm">No bakeries found</p>
+                <p className="text-stone-500 text-sm mb-4">No bakeries found</p>
+
+                {/* Show blog suggestions even when no bakeries - Mobile */}
+                <div className="text-left">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    variant="inline"
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-2">
@@ -552,6 +651,15 @@ function App() {
                     />
                   </div>
                 ))}
+
+                {/* Blog/Recipe Suggestions - Mobile */}
+                <div className="mt-4">
+                  <BlogSuggestions
+                    searchTerms={filters.query ? filters.query.split(' ') : []}
+                    specialties={filteredBakeries.flatMap(b => b.specialties).slice(0, 5)}
+                    variant="inline"
+                  />
+                </div>
               </div>
             )}
           </div>
