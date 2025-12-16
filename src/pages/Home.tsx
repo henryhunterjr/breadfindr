@@ -579,7 +579,7 @@ export default function Home() {
               <ExternalLink className="w-4 h-4" />
             </a>
             <a
-              href="https://bakinggreatbread.blog/recipes"
+              href="https://bakinggreatbread.com/recipes"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold rounded-lg transition-colors"
