@@ -90,7 +90,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/40 z-[2000] transition-opacity duration-300 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={handleClose}
@@ -98,7 +98,7 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
 
       {/* Slide-over Panel */}
       <div
-        className={`fixed inset-y-0 right-0 w-full sm:w-[400px] lg:w-[450px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 right-0 w-full sm:w-[400px] lg:w-[450px] bg-white shadow-2xl z-[2001] transform transition-transform duration-300 ease-out ${
           isAnimating ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

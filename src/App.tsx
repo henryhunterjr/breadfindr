@@ -719,7 +719,11 @@ function App() {
                   >
                     <BakeryCard
                       bakery={bakery}
-                      onClick={() => setSelectedBakery(bakery)}
+                      onClick={() => {
+                        setSelectedBakery(bakery);
+                        // Collapse bottom sheet on mobile when bakery is selected
+                        setSheetState('collapsed');
+                      }}
                       featured={bakery.featured}
                       listNumber={index + 1}
                     />

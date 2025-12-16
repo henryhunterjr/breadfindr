@@ -10,11 +10,13 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Dashboard from './pages/Dashboard';
 import ScrollToTop from './components/ScrollToTop';
+import InAppBrowserPrompt from './components/InAppBrowserPrompt';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
+      <InAppBrowserPrompt />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />

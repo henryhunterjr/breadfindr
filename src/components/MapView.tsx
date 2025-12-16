@@ -20,6 +20,28 @@ const markerColors: Record<string, string> = {
   discovered: '#3b82f6', // Blue for discovered bakeries
 };
 
+// Featured founder locations
+const FOUNDER_LOCATIONS = [
+  {
+    id: 'founder-tyler',
+    name: 'Tyler Cartner',
+    title: 'Wire Monkey',
+    description: 'Craftsman & Co-Founder',
+    lat: 41.6032,  // Connecticut (roughly center of state)
+    lng: -73.0877,
+    color: '#d97706', // Amber/orange
+  },
+  {
+    id: 'founder-henry',
+    name: 'Henry Hunter',
+    title: 'Baking Great Bread',
+    description: 'Educator & Co-Founder',
+    lat: 32.7765,  // Charleston, SC
+    lng: -79.9311,
+    color: '#d97706', // Amber/orange
+  },
+];
+
 interface MapViewProps {
   bakeries: Bakery[];
   userLocation: UserLocation | null;
@@ -102,6 +124,33 @@ function createUserIcon(): L.DivIcon {
   });
 }
 
+// Create founder location icon with home/star symbol
+function createFounderIcon(color: string): L.DivIcon {
+  return L.divIcon({
+    className: 'founder-marker',
+    html: `<div style="
+      background: linear-gradient(135deg, ${color} 0%, #92400e 100%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 4px rgba(217, 119, 6, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    ">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+    </div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18],
+  });
+}
+
 export default function MapView({
   bakeries,
   userLocation,
@@ -144,6 +193,29 @@ export default function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapBounds bakeries={mappableBakeries} userLocation={userLocation} />
+
+        {/* Founder location markers */}
+        {FOUNDER_LOCATIONS.map((founder) => (
+          <Marker
+            key={founder.id}
+            position={[founder.lat, founder.lng]}
+            icon={createFounderIcon(founder.color)}
+            zIndexOffset={100}
+          >
+            <Popup>
+              <div className="min-w-[160px] py-1 text-center">
+                <div className="inline-flex items-center justify-center w-10 h-10 bg-amber-100 rounded-full mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#d97706" stroke="#d97706" strokeWidth="1">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-stone-800">{founder.name}</h3>
+                <p className="text-amber-600 text-sm font-medium">{founder.title}</p>
+                <p className="text-stone-500 text-xs mt-1">{founder.description}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
         {/* User location marker */}
         {userLocation && (
@@ -249,6 +321,14 @@ export default function MapView({
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-blue-500"></div>
             <span>Discovered</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full bg-amber-600 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="7" height="7" viewBox="0 0 24 24" fill="white">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <span>Founder</span>
           </div>
         </div>
       </div>
