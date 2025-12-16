@@ -1,19 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Wheat, Instagram, Facebook, Youtube, Mail } from 'lucide-react';
-import { useState } from 'react';
+import { Wheat, Instagram, Facebook, Youtube } from 'lucide-react';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail('');
-    }
-  };
-
   return (
     <footer className="bg-stone-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -29,7 +17,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://instagram.com/bakinggreatbread"
+                href="https://www.instagram.com/wiremonkeyshop"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-stone-400 hover:text-bakery-500 transition-colors"
@@ -38,7 +26,7 @@ export default function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://facebook.com/bakinggreatbread"
+                href="https://www.facebook.com/groups/1082865755403754"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-stone-400 hover:text-bakery-500 transition-colors"
@@ -47,7 +35,7 @@ export default function Footer() {
                 <Facebook className="w-5 h-5" />
               </a>
               <a
-                href="https://youtube.com/@bakinggreatbread"
+                href="https://www.youtube.com/@henryhunterjr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-stone-400 hover:text-bakery-500 transition-colors"
@@ -113,29 +101,20 @@ export default function Footer() {
             <p className="text-stone-400 text-sm mb-4">
               Get notified about new bakeries and bread tips!
             </p>
-            {subscribed ? (
-              <div className="flex items-center gap-2 text-green-400 text-sm">
-                <Mail className="w-4 h-4" />
-                Thanks for subscribing!
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="flex-1 px-3 py-2 bg-stone-800 border border-stone-700 rounded-lg text-white placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-bakery-500"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-bakery-500 hover:bg-bakery-600 text-white font-medium rounded-lg transition-colors text-sm"
-                >
-                  Subscribe
-                </button>
-              </form>
-            )}
+            <div className="bg-stone-800 rounded-lg overflow-hidden" style={{ minHeight: '120px' }}>
+              <iframe
+                width="100%"
+                height="120"
+                scrolling="no"
+                frameBorder="0"
+                src="https://bakinggreatbread.blog/?mailpoet_form_iframe=1005"
+                className="mailpoet_form_iframe"
+                id="mailpoet_form_iframe"
+                tabIndex={0}
+                allowTransparency={true}
+                style={{ border: 'none' }}
+              />
+            </div>
           </div>
         </div>
 

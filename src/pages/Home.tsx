@@ -14,12 +14,13 @@ import {
   Award,
   Instagram,
   Facebook,
-  Mail,
+  Youtube,
   ExternalLink,
   BookOpen,
   HelpCircle,
   Navigation,
-  Loader2
+  Loader2,
+  ShoppingBag
 } from 'lucide-react';
 import { getCurrentPosition, reverseGeocode } from '../lib/geocoding';
 import { fetchBakeries, isSupabaseConfigured } from '../lib/supabase';
@@ -122,8 +123,6 @@ export default function Home() {
   const [searchLocation, setSearchLocation] = useState('');
   const [showAllStates, setShowAllStates] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
   const [featuredBakeries, setFeaturedBakeries] = useState<Bakery[]>([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
@@ -218,15 +217,6 @@ export default function Home() {
   const handleStateClick = (state: string) => {
     trackEvent({ event: 'location_search', search_location: state });
     navigate(`/search?location=${encodeURIComponent(state)}`);
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      trackEvent({ event: 'newsletter_signup' });
-      setSubscribed(true);
-      setEmail('');
-    }
   };
 
   const displayedStates = showAllStates ? STATES : STATES.slice(0, 12);
@@ -678,9 +668,9 @@ export default function Home() {
               <p className="text-stone-400 mb-6">
                 Connect with fellow bread lovers and stay updated on the latest bakery discoveries.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-3">
                 <a
-                  href="https://facebook.com/bakinggreatbread"
+                  href="https://www.facebook.com/groups/1082865755403754"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 bg-stone-700 hover:bg-stone-600 rounded-lg transition-colors"
@@ -689,13 +679,22 @@ export default function Home() {
                   Facebook
                 </a>
                 <a
-                  href="https://instagram.com/bakinggreatbread"
+                  href="https://www.instagram.com/wiremonkeyshop"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 bg-stone-700 hover:bg-stone-600 rounded-lg transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
                   Instagram
+                </a>
+                <a
+                  href="https://www.youtube.com/@henryhunterjr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-stone-700 hover:bg-stone-600 rounded-lg transition-colors"
+                >
+                  <Youtube className="w-5 h-5" />
+                  YouTube
                 </a>
               </div>
             </div>
@@ -706,29 +705,19 @@ export default function Home() {
               <p className="text-stone-400 mb-6">
                 Get notified about new bakeries, bread tips, and community highlights.
               </p>
-              {subscribed ? (
-                <div className="flex items-center gap-2 text-green-400">
-                  <Mail className="w-5 h-5" />
-                  Thanks for subscribing! Check your inbox.
-                </div>
-              ) : (
-                <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="flex-1 px-4 py-2 bg-stone-700 border border-stone-600 rounded-lg text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-bakery-500"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-6 py-2 bg-bakery-500 hover:bg-bakery-600 text-white font-medium rounded-lg transition-colors"
-                  >
-                    Subscribe
-                  </button>
-                </form>
-              )}
+              <div className="bg-stone-700 rounded-lg overflow-hidden" style={{ minHeight: '120px' }}>
+                <iframe
+                  width="100%"
+                  height="120"
+                  scrolling="no"
+                  frameBorder="0"
+                  src="https://bakinggreatbread.blog/?mailpoet_form_iframe=1005"
+                  className="mailpoet_form_iframe"
+                  tabIndex={0}
+                  allowTransparency={true}
+                  style={{ border: 'none' }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -744,7 +733,7 @@ export default function Home() {
             BreadFindr is a project by Baking Great Bread at Home. Visit our blog for recipes,
             tutorials, and tips to bake amazing bread in your own kitchen.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
             <a
               href="https://bakinggreatbread.blog"
               target="_blank"
@@ -763,6 +752,16 @@ export default function Home() {
             >
               <Wheat className="w-5 h-5" />
               Browse Recipes
+            </a>
+            <a
+              href="https://wiremonkey.com/?ref=BAKINGGREATBREAD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-6 py-3 bg-stone-800 hover:bg-stone-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              Wire Monkey Shop
+              <ExternalLink className="w-4 h-4" />
             </a>
           </div>
         </div>
