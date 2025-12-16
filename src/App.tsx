@@ -52,6 +52,8 @@ function App() {
   useEffect(() => {
     const q = searchParams.get('q');
     const location = searchParams.get('location');
+    const bakeryId = searchParams.get('bakery');
+
     if (q || location) {
       setFilters(prev => ({
         ...prev,
@@ -59,7 +61,15 @@ function App() {
         location: location || prev.location
       }));
     }
-  }, [searchParams]);
+
+    // If a specific bakery ID is provided, select it when bakeries load
+    if (bakeryId && bakeries.length > 0) {
+      const bakery = bakeries.find(b => b.id === bakeryId);
+      if (bakery) {
+        setSelectedBakery(bakery);
+      }
+    }
+  }, [searchParams, bakeries]);
 
   // Load bakeries on mount
   useEffect(() => {

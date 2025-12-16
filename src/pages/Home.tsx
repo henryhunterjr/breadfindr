@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Wheat,
@@ -22,6 +22,9 @@ import {
   Loader2
 } from 'lucide-react';
 import { getCurrentPosition, reverseGeocode } from '../lib/geocoding';
+import { fetchBakeries, isSupabaseConfigured } from '../lib/supabase';
+import { enrichBakeries } from '../lib/googlePlaces';
+import type { Bakery } from '../types';
 import Footer from '../components/Footer';
 
 // Featured bakers data
@@ -121,6 +124,66 @@ export default function Home() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [featuredBakeries, setFeaturedBakeries] = useState<Bakery[]>([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+
+  // Fetch real bakeries for featured section
+  useEffect(() => {
+    async function loadFeaturedBakeries() {
+      setLoadingFeatured(true);
+      try {
+        if (isSupabaseConfigured()) {
+          const allBakeries = await fetchBakeries();
+
+          // Filter to featured bakeries first, or bakeries with good ratings
+          let featured = allBakeries.filter(b => b.featured);
+
+          // If not enough featured, get top-rated bakeries
+          if (featured.length < 3) {
+            const topRated = allBakeries
+              .filter(b => !b.featured)
+              .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            featured = [...featured, ...topRated].slice(0, 3);
+          } else {
+            featured = featured.slice(0, 3);
+          }
+
+          // Enrich bakeries that need images
+          const needsEnrichment = featured.filter(b =>
+            !b.image || b.image.includes('unsplash') || b.image.includes('placeholder')
+          );
+
+          if (needsEnrichment.length > 0) {
+            const enrichmentData = await enrichBakeries(
+              needsEnrichment.map(b => ({
+                id: b.id,
+                name: b.name,
+                latitude: b.latitude,
+                longitude: b.longitude,
+                city: b.city,
+                state: b.state
+              }))
+            );
+
+            featured = featured.map(bakery => {
+              const enrichment = enrichmentData.get(bakery.id);
+              if (enrichment?.found && enrichment.photoUrl) {
+                return { ...bakery, image: enrichment.photoUrl };
+              }
+              return bakery;
+            });
+          }
+
+          setFeaturedBakeries(featured);
+        }
+      } catch (error) {
+        console.error('Error loading featured bakeries:', error);
+      }
+      setLoadingFeatured(false);
+    }
+
+    loadFeaturedBakeries();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -339,35 +402,97 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {FEATURED_BAKERS.map((baker) => (
-              <Link
-                key={baker.id}
-                to="/search"
-                className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-md transition-shadow group"
-              >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={baker.image}
-                    alt={baker.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-4">
-                  <h4 className="font-semibold text-stone-800 mb-1">{baker.name}</h4>
-                  <p className="text-stone-500 text-sm flex items-center gap-1 mb-2">
-                    <MapPin className="w-3 h-3" /> {baker.location}
-                  </p>
-                  <p className="text-stone-600 text-sm mb-3">{baker.specialty}</p>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="font-medium text-stone-800">{baker.rating}</span>
-                    </div>
-                    <span className="text-stone-400 text-sm">({baker.reviews} reviews)</span>
+            {loadingFeatured ? (
+              // Loading skeleton
+              [...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden animate-pulse">
+                  <div className="aspect-[4/3] bg-stone-200" />
+                  <div className="p-4">
+                    <div className="h-5 bg-stone-200 rounded mb-2 w-3/4" />
+                    <div className="h-4 bg-stone-200 rounded mb-2 w-1/2" />
+                    <div className="h-4 bg-stone-200 rounded mb-3 w-2/3" />
+                    <div className="h-4 bg-stone-200 rounded w-1/3" />
                   </div>
                 </div>
-              </Link>
-            ))}
+              ))
+            ) : featuredBakeries.length > 0 ? (
+              featuredBakeries.map((bakery) => (
+                <Link
+                  key={bakery.id}
+                  to={`/search?bakery=${bakery.id}`}
+                  className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-md transition-shadow group"
+                >
+                  <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                    {bakery.image ? (
+                      <img
+                        src={bakery.image}
+                        alt={bakery.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Wheat className="w-12 h-12 text-stone-300" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-stone-800 mb-1">{bakery.name}</h4>
+                    <p className="text-stone-500 text-sm flex items-center gap-1 mb-2">
+                      <MapPin className="w-3 h-3" /> {bakery.city}{bakery.state ? `, ${bakery.state}` : ''}
+                    </p>
+                    <p className="text-stone-600 text-sm mb-3">
+                      {bakery.specialties?.[0] || bakery.type || 'Artisan Bakery'}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {bakery.rating > 0 ? (
+                        <>
+                          <div className="flex items-center gap-1 text-yellow-500">
+                            <Star className="w-4 h-4 fill-current" />
+                            <span className="font-medium text-stone-800">{bakery.rating.toFixed(1)}</span>
+                          </div>
+                          {bakery.reviewCount > 0 && (
+                            <span className="text-stone-400 text-sm">({bakery.reviewCount} reviews)</span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-stone-400 text-sm">New listing</span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              // Fallback to placeholder cards if no bakeries loaded
+              FEATURED_BAKERS.map((baker) => (
+                <Link
+                  key={baker.id}
+                  to="/search"
+                  className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-md transition-shadow group"
+                >
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={baker.image}
+                      alt={baker.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-stone-800 mb-1">{baker.name}</h4>
+                    <p className="text-stone-500 text-sm flex items-center gap-1 mb-2">
+                      <MapPin className="w-3 h-3" /> {baker.location}
+                    </p>
+                    <p className="text-stone-600 text-sm mb-3">{baker.specialty}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="font-medium text-stone-800">{baker.rating}</span>
+                      </div>
+                      <span className="text-stone-400 text-sm">({baker.reviews} reviews)</span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
