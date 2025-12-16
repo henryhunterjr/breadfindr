@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Star, MapPin, Clock, Phone, ExternalLink, Instagram, CheckCircle, X, Send, Loader2, ChevronLeft } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ExternalLink, Instagram, CheckCircle, X, Send, Loader2, ChevronLeft, Globe, Database } from 'lucide-react';
 import type { Bakery, Review } from '../types';
 import { TYPE_LABELS, TYPE_COLORS } from '../constants';
-import { fetchReviews, submitReview } from '../lib/supabase';
+import { fetchReviews, submitReview, saveDiscoveredBakery, isSupabaseConfigured } from '../lib/supabase';
 
 interface BakeryModalProps {
   bakery: Bakery;
@@ -21,6 +21,11 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const isDiscovered = bakery.source === 'google_places';
 
   useEffect(() => {
     // Trigger animation on mount
@@ -66,6 +71,21 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
     }
   };
 
+  const handleSaveBakery = async () => {
+    setSaving(true);
+    setSaveError(null);
+
+    const result = await saveDiscoveredBakery(bakery);
+
+    setSaving(false);
+
+    if (result.success) {
+      setSaveSuccess(true);
+    } else {
+      setSaveError(result.error || 'Failed to save');
+    }
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -92,15 +112,25 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex-1 min-w-0">
-              <h2 className="font-semibold text-stone-800 truncate">{bakery.name}</h2>
+              <h2 className="font-semibold text-stone-800 truncate flex items-center gap-1.5">
+                {bakery.name}
+                {isDiscovered && <Globe className="w-4 h-4 text-blue-500 flex-shrink-0" />}
+              </h2>
               <div className="flex items-center gap-2 text-sm">
                 <span className={`px-2 py-0.5 rounded text-xs ${TYPE_COLORS[bakery.type]}`}>
                   {TYPE_LABELS[bakery.type]}
                 </span>
-                <div className="flex items-center gap-1 text-amber-600">
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-medium">{bakery.rating}</span>
-                </div>
+                {isDiscovered && (
+                  <span className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700">
+                    Discovered
+                  </span>
+                )}
+                {bakery.rating > 0 && (
+                  <div className="flex items-center gap-1 text-amber-600">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-medium">{bakery.rating.toFixed(1)}</span>
+                  </div>
+                )}
               </div>
             </div>
             <button
@@ -121,6 +151,42 @@ export default function BakeryModal({ bakery, onClose }: BakeryModalProps) {
                   alt={bakery.name}
                   className="w-full h-full object-cover"
                 />
+              </div>
+            )}
+
+            {/* Save to Database Banner for Discovered Bakeries */}
+            {isDiscovered && isSupabaseConfigured() && (
+              <div className="mx-5 mt-5 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Database className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-800 text-sm">Auto-discovered bakery</h4>
+                    <p className="text-blue-600 text-xs mt-0.5">
+                      This bakery was found via Google Places. Save it to our database for admin review.
+                    </p>
+                    {saveSuccess ? (
+                      <div className="mt-2 flex items-center gap-2 text-green-700 text-sm">
+                        <CheckCircle className="w-4 h-4" />
+                        Saved! Pending admin approval.
+                      </div>
+                    ) : saveError ? (
+                      <div className="mt-2 text-red-600 text-sm">{saveError}</div>
+                    ) : (
+                      <button
+                        onClick={handleSaveBakery}
+                        disabled={saving}
+                        className="mt-2 flex items-center gap-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        {saving ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Database className="w-4 h-4" />
+                        )}
+                        Save to Database
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
