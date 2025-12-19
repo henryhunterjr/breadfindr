@@ -19,10 +19,13 @@ import {
   BookOpen,
   HelpCircle,
   Navigation,
-  Loader2
+  Loader2,
+  Utensils,
+  Calculator
 } from 'lucide-react';
 import { getCurrentPosition, reverseGeocode } from '../lib/geocoding';
 import Footer from '../components/Footer';
+import NavigationBar from '../components/navigation/NavigationBar';
 
 // Featured bakers data
 const FEATURED_BAKERS = [
@@ -161,37 +164,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-cream-100 flex flex-col">
-      {/* Header - Transparent over hero */}
-      <header className="absolute top-0 left-0 right-0 z-10 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 text-white drop-shadow-lg">
-              <Wheat className="w-8 h-8" />
-              <div>
-                <h1 className="text-xl font-bold">BreadFindr</h1>
-                <p className="text-white/80 text-xs hidden sm:block">Find local artisan bread near you</p>
-              </div>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link
-                to="/search"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-white/90 hover:text-white transition-colors text-sm drop-shadow"
-              >
-                <Search className="w-4 h-4" />
-                Browse Directory
-              </Link>
-              <Link
-                to="/submit"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-bakery-600 font-semibold rounded-lg hover:bg-cream-100 transition-colors text-sm shadow-md"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Add Bakery</span>
-                <span className="sm:hidden">Add</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Navigation Bar - Transparent over hero */}
+      <div className="absolute top-0 left-0 right-0 z-20">
+        <NavigationBar variant="transparent" />
+      </div>
 
       {/* Hero Section with Background Image */}
       <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center">
@@ -600,16 +576,65 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blog & Resources */}
+      {/* Baking Resources */}
       <section className="py-16 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <h3 className="text-2xl md:text-3xl font-bold text-stone-800 text-center mb-4">
             Learn to Bake Great Bread
           </h3>
           <p className="text-stone-600 text-center mb-8 max-w-2xl mx-auto">
-            BreadFindr is a project by Baking Great Bread at Home. Visit our blog for recipes,
-            tutorials, and tips to bake amazing bread in your own kitchen.
+            Explore our comprehensive guides, techniques, and resources to master the art of bread baking.
           </p>
+
+          {/* Internal Resource Cards */}
+          <div className="grid sm:grid-cols-3 gap-6 mb-10">
+            <Link
+              to="/bread-encyclopedia"
+              className="group bg-stone-50 rounded-xl p-6 hover:bg-bakery-50 hover:shadow-md transition-all border border-stone-200"
+            >
+              <div className="w-12 h-12 bg-bakery-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-bakery-200 transition-colors">
+                <BookOpen className="w-6 h-6 text-bakery-500" />
+              </div>
+              <h4 className="font-semibold text-stone-800 mb-2 group-hover:text-bakery-600 transition-colors">
+                Bread Encyclopedia
+              </h4>
+              <p className="text-stone-600 text-sm">
+                Explore 50+ bread varieties from around the world with recipes and tips.
+              </p>
+            </Link>
+
+            <Link
+              to="/baking-techniques"
+              className="group bg-stone-50 rounded-xl p-6 hover:bg-bakery-50 hover:shadow-md transition-all border border-stone-200"
+            >
+              <div className="w-12 h-12 bg-sage-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-sage-200 transition-colors">
+                <Utensils className="w-6 h-6 text-sage-500" />
+              </div>
+              <h4 className="font-semibold text-stone-800 mb-2 group-hover:text-bakery-600 transition-colors">
+                Baking Techniques
+              </h4>
+              <p className="text-stone-600 text-sm">
+                Master essential techniques from autolyse to scoring and beyond.
+              </p>
+            </Link>
+
+            <Link
+              to="/resources"
+              className="group bg-stone-50 rounded-xl p-6 hover:bg-bakery-50 hover:shadow-md transition-all border border-stone-200"
+            >
+              <div className="w-12 h-12 bg-glow-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-glow-200 transition-colors">
+                <Calculator className="w-6 h-6 text-glow-500" />
+              </div>
+              <h4 className="font-semibold text-stone-800 mb-2 group-hover:text-bakery-600 transition-colors">
+                Tools & Resources
+              </h4>
+              <p className="text-stone-600 text-sm">
+                Yeast converter, shopping guides, and community cookbook.
+              </p>
+            </Link>
+          </div>
+
+          {/* External Links */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="https://bakinggreatbread.blog"

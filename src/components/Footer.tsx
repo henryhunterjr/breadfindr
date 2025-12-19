@@ -68,6 +68,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/search" className="text-stone-400 hover:text-white transition-colors">
+                  Find Bakeries
+                </Link>
+              </li>
+              <li>
                 <Link to="/submit" className="text-stone-400 hover:text-white transition-colors">
                   Add Bakery
                 </Link>
@@ -85,10 +90,35 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Learn & Resources */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Legal</h3>
+            <h3 className="font-semibold text-lg mb-4">Learn</h3>
             <ul className="space-y-2">
+              <li>
+                <Link to="/bread-encyclopedia" className="text-stone-400 hover:text-white transition-colors">
+                  Bread Encyclopedia
+                </Link>
+              </li>
+              <li>
+                <Link to="/baking-techniques" className="text-stone-400 hover:text-white transition-colors">
+                  Baking Techniques
+                </Link>
+              </li>
+              <li>
+                <Link to="/resources" className="text-stone-400 hover:text-white transition-colors">
+                  Tools & Resources
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://bakinggreatbread.blog"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-stone-400 hover:text-white transition-colors"
+                >
+                  Blog
+                </a>
+              </li>
               <li>
                 <Link to="/privacy" className="text-stone-400 hover:text-white transition-colors">
                   Privacy Policy

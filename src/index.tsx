@@ -8,6 +8,9 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import BreadEncyclopedia from './pages/BreadEncyclopedia';
+import BakingTechniques from './pages/BakingTechniques';
+import Resources from './pages/Resources';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -21,6 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/bread-encyclopedia" element={<BreadEncyclopedia />} />
+        <Route path="/baking-techniques" element={<BakingTechniques />} />
+        <Route path="/resources" element={<Resources />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
